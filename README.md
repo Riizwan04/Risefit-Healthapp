@@ -5,6 +5,7 @@
 > **Say what you ate in your own words. RiseFit does the maths and keeps you on track, without guilt.** A zero-signup calorie budget for young Indian adults who eat messy, unmeasured meals.
 
 - **Live app:** [https://risefit-healthapp.vercel.app](https://risefit-healthapp.vercel.app) (opens in any browser, no signup, nothing to install)
+- **Report:** [REPORT.md](REPORT.md)
 
 > ⚠️ **Not Medical Advice.** RiseFit gives general estimates only. It cannot diagnose or treat anything. If you feel unwell, see a doctor.
 

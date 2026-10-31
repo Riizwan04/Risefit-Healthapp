@@ -111,7 +111,7 @@
 
 **Who tested it:** Jose, 30, a student in Goa. He is the person I interviewed for Q1 and the customer in Q2, and he agreed to test the app.
 
-**What he did:** I sent him the live link. He opened it and used the app himself, then gave me his feedback in his own words. I did not record his device or browser, and I did not time the session.
+**What he did:** I sent him the live link. He opened it in a browser on his MacBook and used the app himself, then gave me his feedback in his own words. I did not time the session.
 
 **What he pointed out:**
 - The welcome page showed "Start your fitness journey" twice, which he found repetitive. He suggested removing one.
@@ -123,7 +123,9 @@
 1. I removed the second "Start your fitness journey" button. The welcome page now has one, with the "No signup. Nothing to install." note under it.
 2. I added a fourth option to the goal screen, "Or set your own daily calories". The user types a number and the screen shows the allowed range for their own numbers. A target is not accepted below 1500 kcal for men or 1200 kcal for women, or more than 500 kcal a day below maintenance. Outside the range the button stays off and a message says so. I tested this in a browser: too low and too high numbers are refused, the range follows the user's age, height, weight and sex, and the chosen target is kept after a refresh.
 
-**What I did not do:** I did not test the two changes with Jose again, because I ran out of time.
+**Retest:** after I made the two changes, Jose used the app again on his MacBook browser. He liked the changes. I also used the live app myself in my phone's browser, and it worked well there.
+
+**What I did not do:** I did not repeat the AI test in Q3 after the app was fixed, because I ran out of time.
 
 ## Student declaration
 
