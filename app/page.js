@@ -8,17 +8,11 @@ import MissedMealNote from "@/components/MissedMealNote";
 import { missedMealNote } from "@/lib/mealtype";
 import DailySummary from "@/components/DailySummary";
 import { dailySummary } from "@/lib/summary";
+import WeekView from "@/components/WeekView";
 import { catchUpPlan } from "@/lib/catchup";
+import { dateStr, loadDays, saveDays, withDay } from "@/lib/days";
 
 const STORAGE_KEY = "risefit.profile"; // everything lives in this browser only
-const MEALS_KEY = "risefit.meals"; // { date: "YYYY-MM-DD", items: [...] }
-
-// Today's date in the user's local time, e.g. "2026-10-31".
-function todayStr() {
-  const d = new Date();
-  const pad = (n) => String(n).padStart(2, "0");
-  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
-}
 
 // The three one-tap goals on the first screen.
 const GOALS = [
@@ -179,7 +173,7 @@ function BudgetCard({ target, eaten }) {
 
 export default function Home() {
   const [profile, setProfile] = useState(null);
-  const [meals, setMeals] = useState([]); // today's meals only
+  const [days, setDays] = useState({}); // { "YYYY-MM-DD": [meals] } for recent days
   const [loaded, setLoaded] = useState(false); // avoids flashing the welcome screen
 
   // Load the saved profile once, in the browser.
@@ -187,12 +181,10 @@ export default function Home() {
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
       if (saved) setProfile(JSON.parse(saved));
-      // Only keep meals saved today; a new day starts with an empty log.
-      const m = JSON.parse(localStorage.getItem(MEALS_KEY) || "null");
-      if (m && m.date === todayStr()) setMeals(m.items);
     } catch {
       // Storage blocked or corrupted: just show the welcome screen.
     }
+    setDays(loadDays());
     setLoaded(true);
   }, []);
 
@@ -203,15 +195,15 @@ export default function Home() {
     } catch {}
   };
 
-  // Update the meal list in state and in localStorage.
+  // Today's meals come from the history; a new day starts with an empty list.
+  const today = dateStr();
+  const meals = days[today] || [];
+
+  // Replace today's meals, in state and in localStorage.
   const saveMeals = (items) => {
-    setMeals(items);
-    try {
-      localStorage.setItem(
-        MEALS_KEY,
-        JSON.stringify({ date: todayStr(), items })
-      );
-    } catch {}
+    const next = withDay(days, today, items);
+    setDays(next);
+    saveDays(next);
   };
 
   const eaten = meals.reduce((sum, m) => sum + m.kcal, 0);
@@ -261,6 +253,7 @@ export default function Home() {
           <DailySummary
             summary={dailySummary({ target: computeTarget(profile).target, meals })}
           />
+          <WeekView days={days} target={computeTarget(profile).target} />
         </div>
       ) : (
         <Welcome onStart={saveProfile} />
