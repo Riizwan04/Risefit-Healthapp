@@ -12,7 +12,8 @@ import DailySummary from "@/components/DailySummary";
 import { dailySummary } from "@/lib/summary";
 import WeekView from "@/components/WeekView";
 import WorkoutCard from "@/components/WorkoutCard";
-import TabBar from "@/components/TabBar";
+import AppHeader from "@/components/AppHeader";
+import Dock from "@/components/Dock";
 import BudgetCard from "@/components/BudgetCard";
 import Tiles from "@/components/Tiles";
 import Landing from "@/components/Landing";
@@ -265,7 +266,7 @@ export default function Home() {
         />
       ) : profile ? (
         <div>
-          <TabBar tab={tab} onTab={setTab} onChangeGoal={changeGoal} />
+          <AppHeader onChangeGoal={changeGoal} />
 
           {/* Today: the daily flow (budget, guidance, log a meal) */}
           {tab === "today" && (
@@ -325,12 +326,15 @@ export default function Home() {
               <Badges earned={badges} />
             </>
           )}
+          <Dock tab={tab} onTab={setTab} />
         </div>
       ) : (
         <Welcome onStart={saveProfile} onBack={() => setStep("landing")} />
       )}
       <Toast message={toast} />
       <Disclaimer />
+      {/* keeps the notice clear of the floating dock */}
+      {profile && step === "app" && <div className="h-20" />}
     </>
   );
 }
