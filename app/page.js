@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import { computeTarget, DEFAULT_PROFILE } from "@/lib/budget";
 import MealLog from "@/components/MealLog";
+import CatchUpCard from "@/components/CatchUpCard";
+import { catchUpPlan } from "@/lib/catchup";
 
 const STORAGE_KEY = "risefit.profile"; // everything lives in this browser only
 const MEALS_KEY = "risefit.meals"; // { date: "YYYY-MM-DD", items: [...] }
@@ -236,6 +238,13 @@ export default function Home() {
           <div className="mt-4">
             <BudgetCard target={computeTarget(profile).target} eaten={eaten} />
           </div>
+          <CatchUpCard
+            plan={catchUpPlan({
+              target: computeTarget(profile).target,
+              meals,
+              weightKg: profile.weightKg,
+            })}
+          />
           <MealLog
             meals={meals}
             onAdd={(meal) => saveMeals([...meals, meal])}
