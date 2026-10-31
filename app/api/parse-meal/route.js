@@ -46,6 +46,9 @@ function clean(parsed) {
   };
 }
 
+// Allow the AI attempts time to finish (Vercel stops a function after this many seconds).
+export const maxDuration = 30;
+
 // ---- Photo rules -------------------------------------------------------
 const MAX_IMAGE_BYTES = 3 * 1024 * 1024; // about 3 MB after decoding
 const ALLOWED_TYPES = ["image/jpeg", "image/png", "image/webp"];
@@ -114,7 +117,10 @@ export async function POST(request) {
   // 2. Fallback when there is no key, demo mode is on, or the AI call fails.
   //    A photo can't be read locally, so we use the typed words if there are any.
   const fallback = (aiDown, code) => {
-    if (image && !text) return Response.json({ photoFailed: true, message: PHOTO_FAILED });
+    if (image && !text) {
+      const message = code ? PHOTO_FAILED.replace("photo,", `photo (error ${code}),`) : PHOTO_FAILED;
+      return Response.json({ photoFailed: true, message });
+    }
     const note = image
       ? "I couldn't read the photo, so this estimate is based on your words. Please check it."
       : aiDown

@@ -1,6 +1,8 @@
 import { callGemini } from "@/lib/gemini";
 import { ruleInsight } from "@/lib/insight";
 
+export const maxDuration = 30;
+
 // Server-side only. Takes a compact summary of the last days and returns ONE
 // short, friendly insight. The key stays in env vars (see lib/gemini.js).
 
