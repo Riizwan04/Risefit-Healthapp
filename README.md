@@ -14,7 +14,7 @@ Jose, 30, a student in Goa, one of three people I interviewed. He gained weight 
 
 ## What it does
 
-1. **One-tap start.** Pick a goal (Lose slowly -250, Lose steadily -400, Stay the same 0). No account. Optionally tune age, height, weight and sex.
+1. **Welcome, then one-tap start.** A welcome screen leads to the goal picker (Lose slowly -250, Lose steadily -400, Stay the same 0). No account. Optionally tune age, height, weight and sex. After that, a top bar with chips switches between **Today** (budget, guidance, log a meal), **Summary**, **Workout** and **7 days**.
 2. **Daily budget.** Mifflin-St Jeor BMR × 1.35 activity, minus the deficit. The deficit is capped at 500 kcal/day and the target never goes below 1500 kcal (men) or 1200 kcal (women).
 3. **Log meals in plain words or a photo.** Type "2 butter rotis, dal fry, dahi" (Hinglish works too), take a photo with the in-page camera, or upload one. AI estimates the calories.
 4. **Check and correct.** Each item shows its kcal, protein, any hidden fat, a calorie range ("about 450-600") and a one-line reason. Change quantities in half steps, pick breakfast, lunch, snack or dinner, then add it. Meals are marked as AI estimate or fallback estimate, and "edited" if you changed them.
@@ -43,7 +43,7 @@ Jose, 30, a student in Goa, one of three people I interviewed. He gained weight 
 app/page.js                  first screen, budget card, wiring
 app/api/parse-meal/route.js  server route: safety check -> Gemini (text + photo) -> demo fallback
 app/api/insight/route.js     server route: one-sentence 7-day insight, rule-based fallback
-components/                  MealLog, ItemChips, CameraCapture, CatchUpCard, MissedMealNote,
+components/                  Landing, TabBar, MealLog, ItemChips, CameraCapture, CatchUpCard, MissedMealNote,
                              DailySummary, WeekView, WorkoutCard
 lib/budget.js                calorie target maths
 lib/safety.js                red-flag detection
