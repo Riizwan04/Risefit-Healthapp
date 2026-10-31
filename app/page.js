@@ -12,6 +12,7 @@ import WeekView from "@/components/WeekView";
 import WorkoutCard from "@/components/WorkoutCard";
 import TabBar from "@/components/TabBar";
 import BudgetCard from "@/components/BudgetCard";
+import Tiles from "@/components/Tiles";
 import Landing from "@/components/Landing";
 import { weekData, weekStats } from "@/lib/week";
 import { catchUpPlan } from "@/lib/catchup";
@@ -227,6 +228,7 @@ export default function Home() {
               <div className="mt-2">
                 <BudgetCard target={target} eaten={eaten} />
               </div>
+              <Tiles meals={meals} onTab={setTab} />
               <CatchUpCard plan={catchUpPlan({ target, meals, weightKg: profile.weightKg })} />
               <MissedMealNote note={missedMealNote(meals, new Date().getHours())} />
               <MealLog
