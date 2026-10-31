@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { computeTarget, DEFAULT_PROFILE } from "@/lib/budget";
+import { computeTarget, calorieRange, DEFAULT_PROFILE } from "@/lib/budget";
 import MealLog from "@/components/MealLog";
 import CatchUpCard from "@/components/CatchUpCard";
 import NextStep from "@/components/NextStep";
@@ -51,15 +51,23 @@ function Welcome({ onStart, onBack }) {
   // Update one field of the optional "Tune my numbers" form.
   const setField = (key, value) => setTuned((t) => ({ ...t, [key]: value }));
 
-  // Start with the (possibly tuned) profile and the chosen deficit.
-  const start = (deficit) =>
-    onStart({
-      sex: tuned.sex,
-      age: Number(tuned.age) || DEFAULT_PROFILE.age,
-      heightCm: Number(tuned.heightCm) || DEFAULT_PROFILE.heightCm,
-      weightKg: Number(tuned.weightKg) || DEFAULT_PROFILE.weightKg,
-      deficit,
-    });
+  // The (possibly tuned) body numbers, as a profile.
+  const baseProfile = () => ({
+    sex: tuned.sex,
+    age: Number(tuned.age) || DEFAULT_PROFILE.age,
+    heightCm: Number(tuned.heightCm) || DEFAULT_PROFILE.heightCm,
+    weightKg: Number(tuned.weightKg) || DEFAULT_PROFILE.weightKg,
+  });
+
+  // Start with the chosen deficit.
+  const start = (deficit) => onStart({ ...baseProfile(), deficit });
+
+  // Or start with a daily calorie target the user typed in (kept inside the safe range).
+  const [custom, setCustom] = useState("");
+  const range = calorieRange(baseProfile());
+  const customNum = Math.round(Number(custom));
+  const customOk = customNum >= range.min && customNum <= range.max;
+  const startCustom = () => customOk && onStart({ ...baseProfile(), deficit: 0, customKcal: customNum });
 
   const input =
     "w-full rounded-lg border border-white/15 bg-white/5 px-3 py-2 text-sm";
@@ -141,6 +149,37 @@ function Welcome({ onStart, onBack }) {
           Then tap a goal above. Defaults: male, 23, 172 cm, 72 kg.
         </p>
       </details>
+
+      {/* Fourth option: type your own daily calories */}
+      <div className="glass mt-4 p-4">
+        <p className="text-sm font-semibold text-slate-100">Or set your own daily calories</p>
+        <p className="mt-1 text-xs text-slate-400">
+          For your numbers, RiseFit allows {range.min} to {range.max} kcal a day. It keeps targets safe.
+        </p>
+        <div className="mt-3 flex gap-2">
+          <input
+            type="number"
+            inputMode="numeric"
+            className="min-w-0 flex-1 rounded-lg border border-white/15 bg-white/5 px-3 py-2 text-sm"
+            placeholder="e.g. 1800"
+            value={custom}
+            onChange={(e) => setCustom(e.target.value)}
+            aria-label="Your own daily calories"
+          />
+          <button
+            onClick={startCustom}
+            disabled={!customOk}
+            className="rounded-lg bg-gradient-to-br from-emerald-400 to-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-[0_0_22px_rgba(16,185,129,0.4)] disabled:bg-none disabled:bg-white/10 disabled:shadow-none disabled:text-slate-500"
+          >
+            Use this target
+          </button>
+        </div>
+        {custom !== "" && !customOk && (
+          <p className="mt-2 text-xs text-amber-300">
+            Please enter a number between {range.min} and {range.max}.
+          </p>
+        )}
+      </div>
     </div>
   );
 }
