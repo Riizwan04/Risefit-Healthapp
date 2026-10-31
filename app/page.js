@@ -214,7 +214,11 @@ export default function Home() {
         localStorage.setItem("risefit.badges", JSON.stringify(merged));
       } catch {}
       // Celebrate, but not for badges already earned before this visit.
-      if (!firstBadgeCheck.current) showToast(`New badge: ${fresh[0].title} ${fresh[0].icon}`);
+      // Show it just after the "Saved" message, so the first meal gets both.
+      if (!firstBadgeCheck.current) {
+        const text = `New badge: ${fresh[0].title} ${fresh[0].icon}`;
+        setTimeout(() => showToast(text), 1800);
+      }
     }
     firstBadgeCheck.current = false;
   }, [loaded, profile, days, tab]);

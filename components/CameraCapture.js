@@ -49,7 +49,7 @@ export default function CameraCapture({ onCapture, onClose }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4">
-      <div className="w-full max-w-md rounded-2xl bg-white/5 p-3">
+      <div className="w-full max-w-md rounded-2xl border border-white/10 bg-[#0d1412] p-3">
         <video
           ref={videoRef}
           autoPlay
