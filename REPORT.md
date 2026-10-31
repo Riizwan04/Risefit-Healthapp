@@ -81,6 +81,15 @@ Inputs 8 and 9 should be stopped by the local safety check before any AI call, s
 | F18 | Friends groups | Never | Leaderboards and streak pressure are what my interviewees said they dislike. Comparison would work against a calm, personal habit. |
 | N01 | Messy-text and Hinglish parsing | Build now | Added by me. The AI reads descriptions like "thoda sa paneer roll khaya tha with extra mayo" without a fixed format, which a form cannot do. |
 
+**What my interviews told me to build** (only the findings that RiseFit now acts on; interviewees A., 19, J., 30 and R., 22):
+
+- **Photo first:** A. and J. both said sending a photo would be the easiest way to log ("quick", no need to explain the food). RiseFit has a Take photo button and an Upload button next to the text box.
+- **1-2 minutes a day:** A. and R. said 1-2 minutes is the most they would give. RiseFit starts with one tap, and a meal takes one description or photo, a quick check, and Add.
+- **Editable, in simple measures:** A. wanted to edit the ingredients and quantity so the estimate becomes more accurate, and R. wanted simple Indian measures instead of exact grams. RiseFit shows each item with its calories and protein and lets the user change the quantity with a plus and minus button. It counts pieces and servings (for example 2 rotis, 1 bowl of dal) and never asks for grams or a scale.
+- **AI estimate first:** J. felt that only editing numbers by hand "feels like you can just throw random numbers" and that AI help would be more accurate. So RiseFit makes the estimate first and the user only corrects it.
+- **No guilt, a simple next step:** all three said a warning or guilt would put them off and they wanted something like a lighter dinner or a walk. RiseFit's catch-up plan suggests exactly that. Going over budget is shown in amber, never red, and the app has no streaks and no notifications.
+- **Free:** none of the three wanted to pay much (one said not at all, one about Rs 500 a month only if it had the features he wanted, one about Rs 99 a month for an app built for Indian food). RiseFit has no paywall.
+
 **The core experience:**
 
 - **First 2 minutes:** Aarav opens the link, with no login and nothing to install. He taps one goal (Lose slowly, Lose steadily or Stay the same). A daily budget card appears straight away, showing kcal left today. He types or photographs his first meal, checks the item breakdown, changes a quantity if it looks wrong, and taps Add. The budget updates at once.
