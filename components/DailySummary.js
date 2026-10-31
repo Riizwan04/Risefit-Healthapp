@@ -6,7 +6,6 @@ export default function DailySummary({ summary }) {
   const border = {
     "on-track": "border-emerald-200",
     over: "border-amber-200",
-    low: "border-slate-200",
   }[summary.status];
 
   const today = new Date().toLocaleDateString(undefined, {
