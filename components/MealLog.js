@@ -25,6 +25,8 @@ export default function MealLog({ meals, onAdd, onRemove, onUpdate }) {
   const [fileKey, setFileKey] = useState(0); // changing it resets the file input
 
   const field = "rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm";
+  const photoBtn =
+    "flex flex-1 cursor-pointer items-center justify-center rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700";
 
   const PHOTO_ERROR = "I couldn't read that photo, please type what you ate.";
 
@@ -113,33 +115,50 @@ export default function MealLog({ meals, onAdd, onRemove, onUpdate }) {
     <div className="mt-6">
       <h2 className="text-base font-semibold text-slate-700">Log a meal</h2>
 
-      <form onSubmit={estimate} className="mt-2 flex gap-2">
-        <input
-          className={`${field} min-w-0 flex-1`}
-          placeholder={photo ? "Add words (optional)" : "e.g. 2 butter rotis, dal fry, dahi"}
-          maxLength={300}
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-        />
-        {/* capture="environment" makes phones open the rear camera */}
-        <label className="flex cursor-pointer items-center rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700">
-          Photo
+      <form onSubmit={estimate} className="mt-2">
+        <div className="flex gap-2">
           <input
-            key={fileKey}
-            type="file"
-            accept="image/*"
-            capture="environment"
-            className="hidden"
-            onChange={pickPhoto}
+            className={`${field} min-w-0 flex-1`}
+            placeholder={photo ? "Add words (optional)" : "e.g. 2 butter rotis, dal fry, dahi"}
+            maxLength={300}
+            value={text}
+            onChange={(e) => setText(e.target.value)}
           />
-        </label>
-        <button
-          type="submit"
-          disabled={(!text.trim() && !photo) || loading}
-          className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white disabled:bg-slate-300"
-        >
-          {loading ? "..." : "Estimate"}
-        </button>
+          <button
+            type="submit"
+            disabled={(!text.trim() && !photo) || loading}
+            className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white disabled:bg-slate-300"
+          >
+            {loading ? "..." : "Estimate"}
+          </button>
+        </div>
+
+        {/* Two ways to add a photo. Both use the same handler. */}
+        <div className="mt-2 flex gap-2">
+          {/* capture="environment" makes phones open the rear camera */}
+          <label className={photoBtn}>
+            Take photo
+            <input
+              key={`cam-${fileKey}`}
+              type="file"
+              accept="image/*"
+              capture="environment"
+              className="hidden"
+              onChange={pickPhoto}
+            />
+          </label>
+          {/* No capture attribute: opens the gallery / file picker */}
+          <label className={photoBtn}>
+            Upload
+            <input
+              key={`up-${fileKey}`}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={pickPhoto}
+            />
+          </label>
+        </div>
       </form>
 
       {photo && (
