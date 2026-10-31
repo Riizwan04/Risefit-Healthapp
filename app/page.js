@@ -251,6 +251,9 @@ export default function Home() {
             meals={meals}
             onAdd={(meal) => saveMeals([...meals, meal])}
             onRemove={(id) => saveMeals(meals.filter((m) => m.id !== id))}
+            onUpdate={(id, updated) =>
+              saveMeals(meals.map((m) => (m.id === id ? updated : m)))
+            }
           />
           <DailySummary
             summary={dailySummary({ target: computeTarget(profile).target, meals })}

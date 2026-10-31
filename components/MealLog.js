@@ -2,11 +2,19 @@
 
 import { useState } from "react";
 import ItemChips from "@/components/ItemChips";
-import { toMealItem, sumKcal, sumProtein, SOURCE_LABEL } from "@/lib/items";
+import {
+  toMealItem,
+  setItemQty,
+  withQty,
+  isEdited,
+  sumKcal,
+  sumProtein,
+  SOURCE_LABEL,
+} from "@/lib/items";
 
 // Describe a meal -> AI estimate -> preview (editable) -> add to today's list.
 // The parent owns the meal data; this component only reports changes.
-export default function MealLog({ meals, onAdd, onRemove }) {
+export default function MealLog({ meals, onAdd, onRemove, onUpdate }) {
   const [text, setText] = useState("");
   const [loading, setLoading] = useState(false);
   const [preview, setPreview] = useState(null); // { items, kcal, note, source }
@@ -108,7 +116,14 @@ export default function MealLog({ meals, onAdd, onRemove }) {
       {/* Estimate preview: user can correct the kcal before it is saved */}
       {preview && (
         <div className="mt-3 rounded-xl border border-emerald-200 bg-white p-3">
-          {hasItems && <ItemChips items={preview.items} />}
+          {hasItems && (
+            <ItemChips
+              items={preview.items}
+              onChange={(idx, qty) =>
+                setPreview({ ...preview, items: setItemQty(preview.items, idx, qty) })
+              }
+            />
+          )}
           {preview.note && (
             <p className="mt-2 text-xs text-slate-500">{preview.note}</p>
           )}
@@ -170,11 +185,18 @@ export default function MealLog({ meals, onAdd, onRemove }) {
                 </button>
               </div>
               {SOURCE_LABEL[m.source] && (
-                <p className="mt-0.5 text-xs text-slate-400">{SOURCE_LABEL[m.source]}</p>
+                <p className="mt-0.5 text-xs text-slate-400">
+                  {SOURCE_LABEL[m.source]}
+                  {isEdited(m) && " · edited"}
+                </p>
               )}
               {m.items && (
                 <div className="mt-2">
-                  <ItemChips items={m.items} />
+                  {/* Changing a quantity updates this meal and the daily budget at once */}
+                  <ItemChips
+                    items={m.items}
+                    onChange={(idx, qty) => onUpdate(m.id, withQty(m, idx, qty))}
+                  />
                 </div>
               )}
             </li>
