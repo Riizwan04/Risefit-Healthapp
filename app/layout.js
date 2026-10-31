@@ -5,6 +5,9 @@ export const metadata = {
   description: "Say what you ate in your own words. We'll do the maths.",
 };
 
+// Colour of the phone's browser bar.
+export const viewport = { themeColor: "#059669" };
+
 // Root layout: wraps every page. Mobile-first, centred, ~448px wide.
 export default function RootLayout({ children }) {
   return (
