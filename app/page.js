@@ -18,6 +18,8 @@ import Tiles from "@/components/Tiles";
 import Landing from "@/components/Landing";
 import Toast from "@/components/Toast";
 import Highlights from "@/components/Highlights";
+import Badges from "@/components/Badges";
+import { badgeStats, mergeBadges } from "@/lib/badges";
 import { weekData, weekStats } from "@/lib/week";
 import { catchUpPlan } from "@/lib/catchup";
 import { dateStr, loadDays, saveDays, withDay } from "@/lib/days";
@@ -163,6 +165,8 @@ export default function Home() {
   const [step, setStep] = useState("landing");
   const [welcomeBack, setWelcomeBack] = useState(false); // true after a few days away
   const [, setTick] = useState(0); // bump to re-render after water changes
+  const [badges, setBadges] = useState({}); // { badgeId: dateEarned }, kept for good
+  const firstBadgeCheck = useRef(true); // the first check after opening is silent
   const [toast, setToast] = useState(""); // short message that fades after a moment
   const toastTimer = useRef(null);
   const showToast = (message) => {
@@ -194,6 +198,25 @@ export default function Home() {
     } catch {}
     setLoaded(true);
   }, []);
+
+  // Check for new badges whenever meals change or a tab opens (workouts and water are saved elsewhere).
+  useEffect(() => {
+    if (!loaded || !profile) return;
+    let saved = {};
+    try {
+      saved = JSON.parse(localStorage.getItem("risefit.badges") || "{}") || {};
+    } catch {}
+    const { merged, fresh } = mergeBadges(saved, badgeStats(days, computeTarget(profile).target), dateStr());
+    setBadges(merged);
+    if (fresh.length) {
+      try {
+        localStorage.setItem("risefit.badges", JSON.stringify(merged));
+      } catch {}
+      // Celebrate, but not for badges already earned before this visit.
+      if (!firstBadgeCheck.current) showToast(`New badge: ${fresh[0].title} ${fresh[0].icon}`);
+    }
+    firstBadgeCheck.current = false;
+  }, [loaded, profile, days, tab]);
 
   const saveProfile = (p) => {
     setProfile(p);
@@ -292,12 +315,16 @@ export default function Home() {
 
           {tab === "workout" && <WorkoutCard />}
 
-          {tab === "week" &&
-            (hasWeekData ? (
-              <WeekView days={days} target={target} />
-            ) : (
-              <EmptyTab text="Log a meal to start your 7-day view." onLog={() => setTab("today")} />
-            ))}
+          {tab === "week" && (
+            <>
+              {hasWeekData ? (
+                <WeekView days={days} target={target} />
+              ) : (
+                <EmptyTab text="Log a meal to start your 7-day view." onLog={() => setTab("today")} />
+              )}
+              <Badges earned={badges} />
+            </>
+          )}
         </div>
       ) : (
         <Welcome onStart={saveProfile} onBack={() => setStep("landing")} />
