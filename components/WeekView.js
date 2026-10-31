@@ -1,7 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { weekData, weekStats } from "@/lib/week";
+import { lastDates } from "@/lib/days";
+import { loadWorkouts } from "@/lib/progress";
 
 const DAY_LETTER = ["S", "M", "T", "W", "T", "F", "S"];
 
@@ -12,6 +14,12 @@ export default function WeekView({ days, target }) {
   const [insight, setInsight] = useState(null); // { text, source }
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [workoutDays, setWorkoutDays] = useState(0); // workouts done in the last 7 days
+
+  useEffect(() => {
+    const done = loadWorkouts();
+    setWorkoutDays(lastDates(7).filter((d) => done[d]).length);
+  }, []);
 
   const week = weekData(days, target);
   const stats = weekStats(week, target);
@@ -50,6 +58,26 @@ export default function WeekView({ days, target }) {
   return (
     <div className="mt-6 rounded-xl border border-slate-200 bg-white p-4">
       <h2 className="text-base font-semibold text-slate-700">Your last 7 days</h2>
+
+      {/* Weekly wins: only things you did */}
+      <div className="mt-3 grid grid-cols-3 gap-2 text-center">
+        <div className="rounded-lg bg-emerald-50 p-2">
+          <p className="text-lg font-semibold text-emerald-900">
+            {stats.withinDays}/{stats.loggedDays}
+          </p>
+          <p className="text-[11px] text-emerald-700">days within budget</p>
+        </div>
+        <div className="rounded-lg bg-sky-50 p-2">
+          <p className="text-lg font-semibold text-sky-900">
+            {week.reduce((s, d) => s + d.meals.length, 0)}
+          </p>
+          <p className="text-[11px] text-sky-700">meals logged</p>
+        </div>
+        <div className="rounded-lg bg-violet-50 p-2">
+          <p className="text-lg font-semibold text-violet-900">{workoutDays}</p>
+          <p className="text-[11px] text-violet-700">workouts done</p>
+        </div>
+      </div>
 
       <div className="mt-3 flex items-end justify-between gap-1" style={{ height: 96 }}>
         {week.map((d) => {

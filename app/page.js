@@ -17,6 +17,7 @@ import BudgetCard from "@/components/BudgetCard";
 import Tiles from "@/components/Tiles";
 import Landing from "@/components/Landing";
 import Toast from "@/components/Toast";
+import Highlights from "@/components/Highlights";
 import { weekData, weekStats } from "@/lib/week";
 import { catchUpPlan } from "@/lib/catchup";
 import { dateStr, loadDays, saveDays, withDay } from "@/lib/days";
@@ -281,7 +282,10 @@ export default function Home() {
 
           {tab === "summary" &&
             (summary ? (
-              <DailySummary summary={summary} />
+              <>
+                <DailySummary summary={summary} />
+                <Highlights meals={meals} target={target} />
+              </>
             ) : (
               <EmptyTab text="Log a meal to see your summary for today." onLog={() => setTab("today")} />
             ))}
