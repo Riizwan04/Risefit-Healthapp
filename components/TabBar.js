@@ -19,7 +19,7 @@ export default function TabBar({ tab, onTab, onChangeGoal }) {
 
       <div
         role="tablist"
-        className="mt-3 flex gap-2 overflow-x-auto [scrollbar-width:none]"
+        className="mt-3 flex gap-1.5 overflow-x-auto [scrollbar-width:none]"
       >
         {TABS.map((t) => (
           <button
