@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import ItemChips from "@/components/ItemChips";
 import CameraCapture from "@/components/CameraCapture";
+import MiniPlate from "@/components/MiniPlate";
 import { resizeImage } from "@/lib/image";
 import { MEAL_TYPES, TYPE_LABEL, guessMealType } from "@/lib/mealtype";
 import {
@@ -18,9 +19,6 @@ import {
 
 // Describe a meal -> AI estimate -> preview (editable) -> add to today's list.
 // The parent owns the meal data; this component only reports changes.
-// A small icon for each meal type (plain emoji, no image files).
-const TYPE_ICON = { breakfast: "🌅", lunch: "🍛", snack: "🍎", dinner: "🌙" };
-
 // Tap-to-try examples for an empty day.
 const EXAMPLES = [
   "2 rotis, dal and dahi",
@@ -322,8 +320,8 @@ export default function MealLog({ meals, onAdd, onRemove, onUpdate }) {
         <ul className="mt-4 divide-y divide-white/10 rounded-xl border border-white/10 bg-white/5">
           {meals.map((m) => (
             <li key={m.id} className="flex gap-3 px-3 py-2">
-              <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-emerald-500/10 text-base">
-                {TYPE_ICON[m.type] || "🍽️"}
+              <span className="mt-0.5 shrink-0">
+                <MiniPlate size={38} />
               </span>
               <div className="min-w-0 flex-1">
               <div className="flex items-center justify-between">

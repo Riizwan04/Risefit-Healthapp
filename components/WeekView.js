@@ -84,8 +84,8 @@ export default function WeekView({ days, target }) {
           const color = !d.logged
             ? "bg-white/10"
             : d.kcal > target
-              ? "bg-amber-400"
-              : "bg-emerald-500";
+              ? "bg-gradient-to-t from-amber-600 to-amber-300 shadow-[0_0_14px_rgba(251,191,36,0.35)]"
+              : "bg-gradient-to-t from-emerald-600 to-emerald-300 shadow-[0_0_14px_rgba(16,185,129,0.45)]";
           const h = d.logged ? Math.max((d.kcal / top) * 100, 6) : 6;
           return (
             <div key={d.date} className="flex flex-1 flex-col items-center justify-end" style={{ height: "100%" }}>
