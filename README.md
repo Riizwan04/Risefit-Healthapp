@@ -1,6 +1,6 @@
 # RiseFit
 
-**[Your Full Name]** · Roll No. **[Your Roll Number]** · MAI-594 Introduction to Vibe Coding · AY 2026–27
+**Rizwan Sanadi** · Roll No. **PGDMAI-25-07** · MAI-594 Introduction to Vibe Coding · AY 2026–27
 
 > **Say what you ate in your own words. RiseFit does the maths and keeps you on track, without guilt.** A zero-signup calorie budget for young Indian professionals who eat messy, unmeasured meals.
 
