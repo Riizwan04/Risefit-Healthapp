@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import ItemChips from "@/components/ItemChips";
+import CameraCapture from "@/components/CameraCapture";
 import { resizeImage } from "@/lib/image";
 import {
   toMealItem,
@@ -23,6 +24,8 @@ export default function MealLog({ meals, onAdd, onRemove, onUpdate }) {
   const [error, setError] = useState("");
   const [photo, setPhoto] = useState(null); // { dataUrl, data, mimeType } after resizing
   const [fileKey, setFileKey] = useState(0); // changing it resets the file input
+  const [cameraOpen, setCameraOpen] = useState(false); // live in-page camera
+  const cameraInput = useRef(null); // fallback: phone camera app via the file input
 
   const field = "rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm";
   const photoBtn =
@@ -41,6 +44,12 @@ export default function MealLog({ meals, onAdd, onRemove, onUpdate }) {
       setPhoto(null);
       setError(PHOTO_ERROR);
     }
+  };
+
+  // Take photo: use the live camera if the browser has one, else the file input's camera.
+  const takePhoto = () => {
+    if (navigator.mediaDevices?.getUserMedia) setCameraOpen(true);
+    else cameraInput.current?.click();
   };
 
   const removePhoto = () => {
@@ -135,18 +144,20 @@ export default function MealLog({ meals, onAdd, onRemove, onUpdate }) {
 
         {/* Two ways to add a photo. Both use the same handler. */}
         <div className="mt-2 flex gap-2">
-          {/* capture="environment" makes phones open the rear camera */}
-          <label className={photoBtn}>
+          <button type="button" onClick={takePhoto} className={photoBtn}>
             Take photo
-            <input
-              key={`cam-${fileKey}`}
-              type="file"
-              accept="image/*"
-              capture="environment"
-              className="hidden"
-              onChange={pickPhoto}
-            />
-          </label>
+          </button>
+          {/* Fallback for browsers with no live camera: capture="environment"
+              makes phones open their camera app */}
+          <input
+            ref={cameraInput}
+            key={`cam-${fileKey}`}
+            type="file"
+            accept="image/*"
+            capture="environment"
+            className="hidden"
+            onChange={pickPhoto}
+          />
           {/* No capture attribute: opens the gallery / file picker */}
           <label className={photoBtn}>
             Upload
@@ -160,6 +171,17 @@ export default function MealLog({ meals, onAdd, onRemove, onUpdate }) {
           </label>
         </div>
       </form>
+
+      {cameraOpen && (
+        <CameraCapture
+          onCapture={(p) => {
+            setPhoto(p);
+            setError("");
+            setCameraOpen(false);
+          }}
+          onClose={() => setCameraOpen(false)}
+        />
+      )}
 
       {photo && (
         <div className="mt-2 flex items-center gap-3">
