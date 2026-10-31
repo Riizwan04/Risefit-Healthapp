@@ -75,7 +75,7 @@ Open http://localhost:3000.
 | Name | Purpose |
 |---|---|
 | `GEMINI_API_KEY` | Gemini API key (server only). Never commit it. |
-| `GEMINI_MODEL` | Model name, default `gemini-2.5-flash` |
+| `GEMINI_MODEL` | Optional. One model name or a comma-separated list. If empty, the app tries `gemini-flash-latest`, `gemini-3-flash-preview` and `gemini-2.5-flash` in that order, because Google retires model names over time. |
 | `DEMO_MODE` | `1` forces the built-in demo estimator |
 
 Set these in Vercel under Project → Settings → Environment Variables. `.env`, `.env.local` and `node_modules` are git-ignored.

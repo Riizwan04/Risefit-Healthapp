@@ -113,12 +113,12 @@ export async function POST(request) {
 
   // 2. Fallback when there is no key, demo mode is on, or the AI call fails.
   //    A photo can't be read locally, so we use the typed words if there are any.
-  const fallback = (aiDown) => {
+  const fallback = (aiDown, code) => {
     if (image && !text) return Response.json({ photoFailed: true, message: PHOTO_FAILED });
     const note = image
       ? "I couldn't read the photo, so this estimate is based on your words. Please check it."
       : aiDown
-        ? "AI is unavailable right now, so this is a rough estimate. Please check it."
+        ? `AI is unavailable right now${code ? ` (error ${code})` : ""}, so this is a rough estimate. Please check it.`
         : undefined;
     return Response.json({ ...demoParse(text), ...(note && { note }), source: "demo" });
   };
@@ -130,6 +130,6 @@ export async function POST(request) {
     return Response.json({ ...(await askGemini(text, image)), source: "ai" });
   } catch (err) {
     console.error("parse-meal AI error:", err?.message); // never log the key or the photo
-    return fallback(true);
+    return fallback(true, err?.status);
   }
 }
