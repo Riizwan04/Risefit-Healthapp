@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import ItemChips from "@/components/ItemChips";
+import { toMealItem, sumKcal, sumProtein, SOURCE_LABEL } from "@/lib/items";
 
 // Describe a meal -> AI estimate -> preview (editable) -> add to today's list.
 // The parent owns the meal data; this component only reports changes.
@@ -34,8 +36,8 @@ export default function MealLog({ meals, onAdd, onRemove }) {
         setError(data.error || "Something went wrong. Try again.");
       } else {
         setPreview({
-          items: data.items || [],
-          kcal: data.total_kcal ?? "", // empty = user types it
+          items: (data.items || []).map(toMealItem),
+          kcal: "", // only used when nothing was recognised: user types it
           note: data.note || "",
           source: data.source,
         });
@@ -46,12 +48,26 @@ export default function MealLog({ meals, onAdd, onRemove }) {
     setLoading(false);
   };
 
-  const kcalNum = Math.round(Number(preview?.kcal));
-  const canAdd = preview && kcalNum >= 1 && kcalNum <= 5000;
+  // With items the total is their sum; otherwise the user types it.
+  const hasItems = !!preview && preview.items.length > 0;
+  const total = !preview ? 0 : hasItems ? sumKcal(preview.items) : Math.round(Number(preview.kcal));
+  const canAdd = !!preview && total >= 1 && total <= 5000;
 
   const confirmAdd = () => {
     if (!canAdd) return;
-    onAdd({ id: Date.now(), text: text.trim(), kcal: kcalNum });
+    const names = preview.items.map((i) => i.name).join(", ");
+    onAdd(
+      hasItems
+        ? {
+            id: Date.now(),
+            text: text.trim() || names,
+            source: preview.source, // "ai" or "demo" (fallback)
+            items: preview.items,
+            kcal: total,
+            protein_g: sumProtein(preview.items),
+          }
+        : { id: Date.now(), text: text.trim() || "Meal", source: "manual", kcal: total }
+    );
     setText("");
     setPreview(null);
   };
@@ -92,33 +108,32 @@ export default function MealLog({ meals, onAdd, onRemove }) {
       {/* Estimate preview: user can correct the kcal before it is saved */}
       {preview && (
         <div className="mt-3 rounded-xl border border-emerald-200 bg-white p-3">
-          {preview.items.length > 0 && (
-            <ul className="space-y-1 text-sm text-slate-700">
-              {preview.items.map((i, idx) => (
-                <li key={idx} className="flex justify-between">
-                  <span>{i.name}</span>
-                  <span className="text-slate-500">{i.kcal} kcal</span>
-                </li>
-              ))}
-            </ul>
-          )}
+          {hasItems && <ItemChips items={preview.items} />}
           {preview.note && (
             <p className="mt-2 text-xs text-slate-500">{preview.note}</p>
           )}
           <div className="mt-3 flex items-center gap-2">
-            <label className="text-sm text-slate-600" htmlFor="kcal">
-              Total kcal
-            </label>
-            <input
-              id="kcal"
-              type="number"
-              inputMode="numeric"
-              min="1"
-              max="5000"
-              className={`${field} w-24`}
-              value={preview.kcal}
-              onChange={(e) => setPreview({ ...preview, kcal: e.target.value })}
-            />
+            {hasItems ? (
+              <p className="text-sm text-slate-700">
+                Total: <strong>{total} kcal</strong> · {sumProtein(preview.items)} g protein
+              </p>
+            ) : (
+              <>
+                <label className="text-sm text-slate-600" htmlFor="kcal">
+                  Total kcal
+                </label>
+                <input
+                  id="kcal"
+                  type="number"
+                  inputMode="numeric"
+                  min="1"
+                  max="5000"
+                  className={`${field} w-24`}
+                  value={preview.kcal}
+                  onChange={(e) => setPreview({ ...preview, kcal: e.target.value })}
+                />
+              </>
+            )}
             <button
               onClick={confirmAdd}
               disabled={!canAdd}
@@ -141,17 +156,27 @@ export default function MealLog({ meals, onAdd, onRemove }) {
       ) : (
         <ul className="mt-4 divide-y divide-slate-200 rounded-xl border border-slate-200 bg-white">
           {meals.map((m) => (
-            <li key={m.id} className="flex items-center justify-between px-3 py-2">
-              <span className="min-w-0 flex-1 truncate text-sm">{m.text}</span>
-              <span className="ml-3 text-sm text-slate-600">{m.kcal} kcal</span>
-              {/* Slate, not red: removing a meal isn't a danger action */}
-              <button
-                onClick={() => onRemove(m.id)}
-                className="ml-3 text-sm text-slate-400"
-                aria-label={`Remove ${m.text}`}
-              >
-                ✕
-              </button>
+            <li key={m.id} className="px-3 py-2">
+              <div className="flex items-center justify-between">
+                <span className="min-w-0 flex-1 truncate text-sm">{m.text}</span>
+                <span className="ml-3 text-sm text-slate-600">{m.kcal} kcal</span>
+                {/* Slate, not red: removing a meal isn't a danger action */}
+                <button
+                  onClick={() => onRemove(m.id)}
+                  className="ml-3 text-sm text-slate-400"
+                  aria-label={`Remove ${m.text}`}
+                >
+                  ✕
+                </button>
+              </div>
+              {SOURCE_LABEL[m.source] && (
+                <p className="mt-0.5 text-xs text-slate-400">{SOURCE_LABEL[m.source]}</p>
+              )}
+              {m.items && (
+                <div className="mt-2">
+                  <ItemChips items={m.items} />
+                </div>
+              )}
             </li>
           ))}
         </ul>
