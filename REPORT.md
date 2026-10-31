@@ -59,7 +59,38 @@ Inputs 8 and 9 should be stopped by the local safety check before any AI call, s
 
 ## Q4. What I will build, and what I will leave out
 
-TODO: fill after testing
+| ID | Feature | Build now / Later / Never | Reason |
+|---|---|---|---|
+| F01 | Food photo to calories | Build now | Built for both a typed description and a photo. It removes database searching, the logging effort from Q1 reason 2. The user always checks and edits the result. |
+| F02 | Profile and goals | Build now | One tap on a goal starts the app with default numbers. No account. Age, height, weight and sex are optional. |
+| F03 | Activity tracking | Later | The first version is about food. The catch-up plan suggests a walk but does not track it. |
+| F04 | Diet plan | Build now | Built as a daily calorie budget with a capped deficit and a safe minimum. No water target and no meal plan, to avoid giving diet prescriptions. |
+| F05 | Progress tracker | Later | Only today's summary is built. History and trends wait for a later version. |
+| F06 | Sleep tracking | Later | Unrelated to the food problem, and it adds screens. |
+| F07 | Challenges and workout videos | Never | Streaks and challenges are the pressure my interviewees said would make them delete an app. Videos also bring copyright risk. |
+| F08 | AI health coach (chat or voice) | Later | Not built. The short guidance Aarav needs after a heavy meal is delivered by the rule-based catch-up plan (F09) instead. |
+| F09 | Catch-up planning | Build now | Q1 reason 3: apps give no way to recover after a heavy meal. Built as simple rules: a light next meal and a short walk, no guilt, and never an instruction to skip a meal. |
+| F10 | Reports | Later | Not needed for a 1-2 minute daily routine. |
+| F11 | Wearables | Never | Hardware and devices were one of the biggest sources of complaints in my review count. Syncing is also fragile and needs setup, which breaks the nothing-to-install rule. |
+| F12 | Subscription tiers | Never | Paid plans and sales pressure were the biggest complaint in my reviews (Q1 reason 1). RiseFit is free with no paywall. |
+| F13 | Free consultation | Never | A person on call cannot be run by one student, and sales calls were part of the complaints about paid plans. |
+| F14 | Community activities | Never | Needs outside partners and coordination that have nothing to do with the logging problem. |
+| F15 | Emergency: hospital | Never | RiseFit is not a medical service. For red-flag text it stops and points to a doctor or 112 instead. |
+| F16 | Emergency: caretaker or nurse | Never | Same reason as F15, and it belongs to the over-60 customer I rejected in Q2. |
+| F17 | Guardian access | Never | Aarav is an independent adult. Sharing needs accounts, which RiseFit does not have. |
+| F18 | Friends groups | Never | Leaderboards and streak pressure are what my interviewees said they dislike. Comparison would work against a calm, personal habit. |
+| N01 | Messy-text and Hinglish parsing | Build now | Added by me. The AI reads descriptions like "thoda sa paneer roll khaya tha with extra mayo" without a fixed format, which a form cannot do. |
+
+**The core experience:**
+
+- **First 2 minutes:** Aarav opens the link, with no login and nothing to install. He taps one goal (Lose slowly, Lose steadily or Stay the same). A daily budget card appears straight away, showing kcal left today. He types or photographs his first meal, checks the item breakdown, changes a quantity if it looks wrong, and taps Add. The budget updates at once.
+- **Normal day:** he logs lunch. If it is a heavy meal, a calm card suggests a light next meal and a short walk. If he goes over budget, the card turns amber, not red, and the catch-up plan says it is one day and not to skip meals. At any time the Today's summary card shows eaten against target. Red appears only for safety alerts, and a "Not Medical Advice" notice is on every screen.
+
+**My three hardest calls:**
+
+1. **No login (all data stays in the browser):** hard because Aarav loses his log if he clears browser data and cannot move between phone and laptop. I chose it because the project needs the app to open from a link with no signup, and because account walls are the kind of friction my Q1 research found people leave over.
+2. **Dropping wearables (F11):** hard because step counts are an easy and popular input. I dropped them because they need setup and devices, which breaks the nothing-to-install rule, and device complaints were a large share of the bad reviews I read.
+3. **Dropping workout videos and challenges (F07):** hard because exercise matters for losing weight. I dropped them because they add copyright risk and streak pressure, and my interviewees said guilt and streaks make them delete an app. RiseFit stays focused on food and gives only a short walk suggestion.
 
 ## Q5. User test
 
