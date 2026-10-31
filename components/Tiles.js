@@ -9,7 +9,7 @@ const MAX_GLASSES = 20;
 // Four small colour tiles under the ring: protein, meals, workout and water.
 // Emerald = food, sky = protein, violet = workout, teal = water.
 // (Amber and red are never used here: amber means over budget, red means a safety alert.)
-export default function Tiles({ meals, onTab }) {
+export default function Tiles({ meals, onTab, onChange }) {
   const today = dateStr();
   const [water, setWaterState] = useState(0);
   const [workoutDone, setWorkoutDone] = useState(false);
@@ -25,6 +25,7 @@ export default function Tiles({ meals, onTab }) {
     const next = Math.min(Math.max(water + delta, 0), MAX_GLASSES);
     setWaterState(next);
     setWater(today, next);
+    onChange?.(); // lets the page refresh the "next step" card
   };
 
   const tile = "rounded-xl border p-3";

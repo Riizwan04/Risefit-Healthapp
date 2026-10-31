@@ -126,7 +126,7 @@ export default function MealLog({ meals, onAdd, onRemove, onUpdate }) {
   };
 
   return (
-    <div className="mt-6">
+    <div className="mt-6" id="log-meal">
       <h2 className="text-base font-semibold text-slate-700">Log a meal</h2>
 
       <form onSubmit={estimate} className="mt-2">

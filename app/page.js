@@ -4,8 +4,10 @@ import { useEffect, useState } from "react";
 import { computeTarget, DEFAULT_PROFILE } from "@/lib/budget";
 import MealLog from "@/components/MealLog";
 import CatchUpCard from "@/components/CatchUpCard";
-import MissedMealNote from "@/components/MissedMealNote";
-import { missedMealNote } from "@/lib/mealtype";
+import NextStep from "@/components/NextStep";
+import Greeting from "@/components/Greeting";
+import { nextStep } from "@/lib/nextstep";
+import { loadWater, loadWorkouts } from "@/lib/progress";
 import DailySummary from "@/components/DailySummary";
 import { dailySummary } from "@/lib/summary";
 import WeekView from "@/components/WeekView";
@@ -157,6 +159,8 @@ export default function Home() {
   const [tab, setTab] = useState("today"); // today | summary | workout | week
   // landing (every time the app opens) -> goal (new visitors) or app (returning visitors)
   const [step, setStep] = useState("landing");
+  const [welcomeBack, setWelcomeBack] = useState(false); // true after a few days away
+  const [, setTick] = useState(0); // bump to re-render after water changes
   const [profile, setProfile] = useState(null);
   const [days, setDays] = useState({}); // { "YYYY-MM-DD": [meals] } for recent days
   const [loaded, setLoaded] = useState(false); // avoids flashing the welcome screen
@@ -170,6 +174,15 @@ export default function Home() {
       // Storage blocked or corrupted: just show the welcome screen.
     }
     setDays(loadDays());
+    // Remember the last visit; after 2+ days away show a warm welcome (never a count of missed days).
+    try {
+      const last = localStorage.getItem("risefit.lastVisit");
+      if (last) {
+        const gap = (new Date(dateStr() + "T00:00:00") - new Date(last + "T00:00:00")) / 86400000;
+        setWelcomeBack(gap >= 2);
+      }
+      localStorage.setItem("risefit.lastVisit", dateStr());
+    } catch {}
     setLoaded(true);
   }, []);
 
@@ -225,12 +238,25 @@ export default function Home() {
           {/* Today: the daily flow (budget, guidance, log a meal) */}
           {tab === "today" && (
             <>
-              <div className="mt-2">
+              <Greeting welcomeBack={welcomeBack} />
+              <div className="mt-3">
                 <BudgetCard target={target} eaten={eaten} />
               </div>
-              <Tiles meals={meals} onTab={setTab} />
+              <Tiles meals={meals} onTab={setTab} onChange={() => setTick((t) => t + 1)} />
+              <NextStep
+                step={nextStep({
+                  hour: new Date().getHours(),
+                  meals,
+                  workoutDone: !!loadWorkouts()[dateStr()],
+                  water: loadWater()[dateStr()] || 0,
+                })}
+                onAction={(a) => {
+                  if (a === "workout") return setTab("workout");
+                  document.getElementById("log-meal")?.scrollIntoView({ behavior: "smooth" });
+                  document.querySelector("#log-meal input[type=text], #log-meal input:not([type])")?.focus();
+                }}
+              />
               <CatchUpCard plan={catchUpPlan({ target, meals, weightKg: profile.weightKg })} />
-              <MissedMealNote note={missedMealNote(meals, new Date().getHours())} />
               <MealLog
                 meals={meals}
                 onAdd={(meal) => saveMeals([...meals, meal])}
