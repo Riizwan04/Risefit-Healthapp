@@ -1,6 +1,8 @@
 import { itemKcal, itemProtein } from "@/lib/items";
 
+const MIN_QTY = 0.5; // half portions are allowed ("half a cup of rice")
 const MAX_QTY = 20;
+const STEP = 0.5;
 
 // One chip per food item: "2x roti · 200 kcal · 6 g protein",
 // plus a small "hidden fat" note when the AI allowed for oil/ghee/butter.
@@ -18,8 +20,8 @@ export default function ItemChips({ items, onChange }) {
               <button
                 type="button"
                 className={stepBtn}
-                disabled={it.qty <= 1}
-                onClick={() => onChange(idx, it.qty - 1)}
+                disabled={it.qty <= MIN_QTY}
+                onClick={() => onChange(idx, it.qty - STEP)}
                 aria-label={`Less ${it.name}`}
               >
                 −
@@ -33,7 +35,7 @@ export default function ItemChips({ items, onChange }) {
                 type="button"
                 className={stepBtn}
                 disabled={it.qty >= MAX_QTY}
-                onClick={() => onChange(idx, it.qty + 1)}
+                onClick={() => onChange(idx, it.qty + STEP)}
                 aria-label={`More ${it.name}`}
               >
                 +
