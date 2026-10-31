@@ -194,7 +194,8 @@ function EmptyTab({ text, onLog }) {
 
 export default function Home() {
   const [tab, setTab] = useState("today"); // today | summary | workout | week
-  const [step, setStep] = useState("landing"); // new visitors: landing -> goal
+  // landing (every time the app opens) -> goal (new visitors) or app (returning visitors)
+  const [step, setStep] = useState("landing");
   const [profile, setProfile] = useState(null);
   const [days, setDays] = useState({}); // { "YYYY-MM-DD": [meals] } for recent days
   const [loaded, setLoaded] = useState(false); // avoids flashing the welcome screen
@@ -213,6 +214,7 @@ export default function Home() {
 
   const saveProfile = (p) => {
     setProfile(p);
+    setStep("app");
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(p));
     } catch {}
@@ -250,7 +252,12 @@ export default function Home() {
 
   return (
     <>
-      {profile ? (
+      {step === "landing" ? (
+        <Landing
+          returning={!!profile}
+          onStart={() => setStep(profile ? "app" : "goal")}
+        />
+      ) : profile ? (
         <div>
           <TabBar tab={tab} onTab={setTab} onChangeGoal={changeGoal} />
 
@@ -290,11 +297,7 @@ export default function Home() {
             ))}
         </div>
       ) : (
-        (step === "goal" ? (
-          <Welcome onStart={saveProfile} onBack={() => setStep("landing")} />
-        ) : (
-          <Landing onStart={() => setStep("goal")} />
-        ))
+        <Welcome onStart={saveProfile} onBack={() => setStep("landing")} />
       )}
       <Disclaimer />
     </>

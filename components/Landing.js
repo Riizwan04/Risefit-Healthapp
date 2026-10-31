@@ -6,11 +6,14 @@ const POINTS = [
   "Gentle daily workouts and a simple 7-day view.",
 ];
 
-export default function Landing({ onStart }) {
+// returning = the visitor already has a saved goal: say "Welcome back" and show Continue.
+export default function Landing({ onStart, returning = false }) {
   return (
     <div className="pt-4">
       <div className="rounded-3xl bg-gradient-to-br from-emerald-500 to-emerald-700 p-6 text-white shadow-sm">
-        <p className="text-sm font-medium text-emerald-100">Welcome to</p>
+        <p className="text-sm font-medium text-emerald-100">
+          {returning ? "Welcome back to" : "Welcome to"}
+        </p>
         <h1 className="mt-1 text-4xl font-bold">RiseFit</h1>
         <p className="mt-3 text-lg font-medium">
           Track your fitness. Start your journey today.
@@ -37,7 +40,7 @@ export default function Landing({ onStart }) {
         onClick={onStart}
         className="mt-8 w-full rounded-xl bg-emerald-600 px-4 py-3 text-base font-semibold text-white shadow-sm active:bg-emerald-700"
       >
-        Start your fitness journey
+        {returning ? "Continue" : "Start your fitness journey"}
       </button>
       <p className="mt-3 text-center text-xs text-slate-500">
         No signup. Nothing to install. Your meal log is saved on your device, not
