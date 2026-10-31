@@ -11,22 +11,32 @@ Rules:
 - Never give medical advice, diagnoses or diets.
 - If the text is not about food, return an empty items list.
 Reply with ONLY this JSON, nothing else:
-{"items":[{"name":string,"qty":number,"kcal":number,"protein_g":number,"hidden_fat":string|null}],"total_kcal":number|null,"note":string}
+{"items":[{"name":string,"qty":number,"kcal":number,"protein_g":number,"kcal_min":number,"kcal_max":number,"hidden_fat":string|null}],"total_kcal":number|null,"note":string}
 "name" is the food without a count (e.g. "roti"). "qty" is how many pieces/servings (e.g. 2). "kcal" and "protein_g" are the TOTAL for that qty.
+"kcal_min" and "kcal_max" are your honest low and high estimate of the TOTAL kcal for that qty (the real value should fall between them).
 "hidden_fat" is a short note on cooking oil, ghee or butter you allowed for (e.g. "about 1 tsp ghee"), or null.
-"note" is one short friendly sentence about the main uncertainty (e.g. oil or portion size).`;
+"note" is one short friendly sentence giving the main reason for your estimate or its biggest uncertainty (e.g. "assumed 1 tsp oil per sabzi").`;
 
 // Keep numbers sane no matter what the model returns.
 function clean(parsed) {
   const items = (Array.isArray(parsed.items) ? parsed.items : [])
     .slice(0, 12)
-    .map((i) => ({
+    .map((i) => {
+      const kcal = Math.min(Math.max(Math.round(Number(i.kcal) || 0), 0), 3000);
+      const lo = Math.round(Number(i.kcal_min));
+      const hi = Math.round(Number(i.kcal_max));
+      const hasRange = Number.isFinite(lo) && Number.isFinite(hi) && lo > 0 && hi > 0;
+      return {
       name: String(i.name || "Item").slice(0, 60),
+      // Keep the range sane: low <= estimate <= high. Null if the AI gave none.
+      kcal_min: hasRange ? Math.min(lo, kcal) : null,
+      kcal_max: hasRange ? Math.min(Math.max(hi, kcal), 3000) : null,
       qty: Math.min(Math.max(Number(i.qty) || 1, 0.5), 20),
       hidden_fat: i.hidden_fat ? String(i.hidden_fat).slice(0, 60) : null,
-      kcal: Math.min(Math.max(Math.round(Number(i.kcal) || 0), 0), 3000),
+      kcal,
       protein_g: Math.min(Math.max(Math.round(Number(i.protein_g) || 0), 0), 300),
-    }));
+      };
+    });
   const sum = items.reduce((s, i) => s + i.kcal, 0);
   return {
     items,

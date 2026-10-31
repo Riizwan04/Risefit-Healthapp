@@ -12,6 +12,7 @@ import {
   isEdited,
   sumKcal,
   sumProtein,
+  mealRange,
   SOURCE_LABEL,
 } from "@/lib/items";
 
@@ -111,6 +112,7 @@ export default function MealLog({ meals, onAdd, onRemove, onUpdate }) {
             id: Date.now(),
             text: text.trim() || names,
             type: preview.type,
+            note: preview.source === "ai" ? preview.note : "", // the AI's reason
             source: preview.source, // "ai" or "demo" (fallback)
             items: preview.items,
             kcal: total,
@@ -237,12 +239,19 @@ export default function MealLog({ meals, onAdd, onRemove, onUpdate }) {
             />
           )}
           {preview.note && (
-            <p className="mt-2 text-xs text-slate-500">{preview.note}</p>
+            <p className="mt-2 text-xs text-slate-500">
+              {preview.source === "ai" ? "Why: " : ""}
+              {preview.note}
+            </p>
           )}
           <div className="mt-3 flex items-center gap-2">
             {hasItems ? (
               <p className="text-sm text-slate-700">
-                Total: <strong>{total} kcal</strong> · {sumProtein(preview.items)} g protein
+                Total: <strong>{total} kcal</strong>
+                {mealRange(preview.items) && (
+                  <> (about {mealRange(preview.items).low}–{mealRange(preview.items).high})</>
+                )}{" "}
+                · {sumProtein(preview.items)} g protein
               </p>
             ) : (
               <>
@@ -303,6 +312,12 @@ export default function MealLog({ meals, onAdd, onRemove, onUpdate }) {
                     .join(" · ")}
                 </p>
               )}
+              {m.items && mealRange(m.items) && (
+                <p className="mt-0.5 text-xs text-slate-500">
+                  About {mealRange(m.items).low}–{mealRange(m.items).high} kcal
+                </p>
+              )}
+              {m.note && <p className="mt-0.5 text-xs text-slate-500">Why: {m.note}</p>}
               {m.items && (
                 <div className="mt-2">
                   {/* Changing a quantity updates this meal and the daily budget at once */}
