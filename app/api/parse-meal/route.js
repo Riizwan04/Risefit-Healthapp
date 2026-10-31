@@ -1,8 +1,7 @@
-import Anthropic from "@anthropic-ai/sdk";
 import { checkRedFlags } from "@/lib/safety";
 import { demoParse } from "@/lib/demo";
 
-// Server-side only: the API key is read from env vars and never reaches the browser.
+// Server-side only: the Gemini API key is read from env vars and never reaches the browser.
 
 const SYSTEM_PROMPT = `You estimate calories for meals described in plain words, often Indian food, Hinglish, or home/mess/PG meals with no exact weights.
 Rules:
@@ -48,26 +47,43 @@ export async function POST(request) {
   if (flag) return Response.json({ safety: flag });
 
   // 2. Demo mode, or no key available: use the local parser.
-  const demo = process.env.DEMO_MODE === "1" || !process.env.ANTHROPIC_API_KEY;
+  const demo = process.env.DEMO_MODE === "1" || !process.env.GEMINI_API_KEY;
   if (demo) return Response.json({ ...demoParse(text), source: "demo" });
 
-  // 3. Real AI estimate.
+  // 3. Real AI estimate via the Gemini REST API (no SDK needed).
   try {
-    const client = new Anthropic(); // reads ANTHROPIC_API_KEY from env
-    const res = await client.messages.create({
-      model: process.env.ANTHROPIC_MODEL || "claude-haiku-5-5",
-      max_tokens: 600,
-      output_config: { effort: "low" },
-      system: SYSTEM_PROMPT,
-      messages: [{ role: "user", content: text }],
-    });
-    const block = res.content.find((b) => b.type === "text");
-    const json = block && block.text.match(/\{[\s\S]*\}/);
+    const model = process.env.GEMINI_MODEL || "gemini-2.5-flash";
+    const res = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "x-goog-api-key": process.env.GEMINI_API_KEY, // header, so it never appears in a URL/log
+        },
+        body: JSON.stringify({
+          systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] },
+          contents: [{ role: "user", parts: [{ text }] }],
+          generationConfig: {
+            responseMimeType: "application/json", // ask for JSON back
+            maxOutputTokens: 2048,
+            temperature: 0.2,
+          },
+        }),
+        signal: AbortSignal.timeout(15000), // don't hang the user
+      }
+    );
+    if (!res.ok) throw new Error(`Gemini HTTP ${res.status}`);
+    const data = await res.json();
+    const reply = (data.candidates?.[0]?.content?.parts || [])
+      .map((p) => p.text || "")
+      .join("");
+    const json = reply.match(/\{[\s\S]*\}/);
     if (!json) throw new Error("No JSON in reply");
     return Response.json({ ...clean(JSON.parse(json[0])), source: "ai" });
   } catch (err) {
     // Network/API trouble: fall back to the demo parser so the app still works.
-    console.error("parse-meal AI error:", err?.message);
+    console.error("parse-meal AI error:", err?.message); // never log the key
     return Response.json({
       ...demoParse(text),
       source: "demo",
