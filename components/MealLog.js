@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import ItemChips from "@/components/ItemChips";
+import { resizeImage } from "@/lib/image";
 import {
   toMealItem,
   setItemQty,
@@ -20,13 +21,35 @@ export default function MealLog({ meals, onAdd, onRemove, onUpdate }) {
   const [preview, setPreview] = useState(null); // { items, kcal, note, source }
   const [alert, setAlert] = useState(null); // red-flag message (the only red in the app)
   const [error, setError] = useState("");
+  const [photo, setPhoto] = useState(null); // { dataUrl, data, mimeType } after resizing
+  const [fileKey, setFileKey] = useState(0); // changing it resets the file input
 
   const field = "rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm";
 
-  // Send the text to our server route for an estimate.
+  const PHOTO_ERROR = "I couldn't read that photo, please type what you ate.";
+
+  // A photo was picked (or taken): shrink it, then keep it for the estimate.
+  const pickPhoto = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setError("");
+    try {
+      setPhoto(await resizeImage(file));
+    } catch {
+      setPhoto(null);
+      setError(PHOTO_ERROR);
+    }
+  };
+
+  const removePhoto = () => {
+    setPhoto(null);
+    setFileKey((k) => k + 1);
+  };
+
+  // Send the text (and photo, if any) to our server route for an estimate.
   const estimate = async (e) => {
     e.preventDefault();
-    if (!text.trim() || loading) return;
+    if ((!text.trim() && !photo) || loading) return;
     setLoading(true);
     setError("");
     setAlert(null);
@@ -35,11 +58,16 @@ export default function MealLog({ meals, onAdd, onRemove, onUpdate }) {
       const res = await fetch("/api/parse-meal", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ text }),
+        body: JSON.stringify({
+          text,
+          image: photo ? { mimeType: photo.mimeType, data: photo.data } : undefined,
+        }),
       });
       const data = await res.json();
       if (data.safety) {
         setAlert(data.safety.message); // stop: nothing is logged
+      } else if (data.photoFailed) {
+        setError(data.message || PHOTO_ERROR);
       } else if (!res.ok) {
         setError(data.error || "Something went wrong. Try again.");
       } else {
@@ -77,6 +105,7 @@ export default function MealLog({ meals, onAdd, onRemove, onUpdate }) {
         : { id: Date.now(), text: text.trim() || "Meal", source: "manual", kcal: total }
     );
     setText("");
+    removePhoto();
     setPreview(null);
   };
 
@@ -87,19 +116,44 @@ export default function MealLog({ meals, onAdd, onRemove, onUpdate }) {
       <form onSubmit={estimate} className="mt-2 flex gap-2">
         <input
           className={`${field} min-w-0 flex-1`}
-          placeholder="e.g. 2 butter rotis, dal fry, dahi"
+          placeholder={photo ? "Add words (optional)" : "e.g. 2 butter rotis, dal fry, dahi"}
           maxLength={300}
           value={text}
           onChange={(e) => setText(e.target.value)}
         />
+        {/* capture="environment" makes phones open the rear camera */}
+        <label className="flex cursor-pointer items-center rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700">
+          Photo
+          <input
+            key={fileKey}
+            type="file"
+            accept="image/*"
+            capture="environment"
+            className="hidden"
+            onChange={pickPhoto}
+          />
+        </label>
         <button
           type="submit"
-          disabled={!text.trim() || loading}
+          disabled={(!text.trim() && !photo) || loading}
           className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white disabled:bg-slate-300"
         >
           {loading ? "..." : "Estimate"}
         </button>
       </form>
+
+      {photo && (
+        <div className="mt-2 flex items-center gap-3">
+          <img
+            src={photo.dataUrl}
+            alt="Your meal"
+            className="h-16 w-16 rounded-lg object-cover"
+          />
+          <button onClick={removePhoto} className="text-sm text-slate-500 underline">
+            Remove
+          </button>
+        </div>
+      )}
 
       {/* Safety alert: red is reserved for this only */}
       {alert && (
