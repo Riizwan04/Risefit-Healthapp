@@ -151,7 +151,7 @@ export default function MealLog({ meals, onAdd, onRemove, onUpdate }) {
           <button
             type="submit"
             disabled={(!text.trim() && !photo) || loading}
-            className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white disabled:bg-white/10"
+            className="rounded-lg bg-gradient-to-br from-emerald-400 to-emerald-600 shadow-[0_0_22px_rgba(16,185,129,0.4)] px-4 py-2 text-sm font-semibold text-white disabled:bg-none disabled:bg-white/10 disabled:shadow-none"
           >
             {loading ? "..." : "Estimate"}
           </button>
@@ -283,7 +283,7 @@ export default function MealLog({ meals, onAdd, onRemove, onUpdate }) {
             <button
               onClick={confirmAdd}
               disabled={!canAdd}
-              className="ml-auto rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white disabled:bg-white/10"
+              className="ml-auto rounded-lg bg-gradient-to-br from-emerald-400 to-emerald-600 shadow-[0_0_22px_rgba(16,185,129,0.4)] px-4 py-2 text-sm font-semibold text-white disabled:bg-none disabled:bg-white/10 disabled:shadow-none"
             >
               Add
             </button>

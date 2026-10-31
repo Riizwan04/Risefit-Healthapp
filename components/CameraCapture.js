@@ -66,7 +66,7 @@ export default function CameraCapture({ onCapture, onClose }) {
             type="button"
             onClick={capture}
             disabled={!ready}
-            className="flex-1 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white disabled:bg-white/10"
+            className="flex-1 rounded-lg bg-gradient-to-br from-emerald-400 to-emerald-600 shadow-[0_0_22px_rgba(16,185,129,0.4)] px-4 py-2 text-sm font-semibold text-white disabled:bg-none disabled:bg-white/10 disabled:shadow-none"
           >
             Take photo
           </button>

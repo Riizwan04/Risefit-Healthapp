@@ -14,7 +14,7 @@ export default function Landing({ onStart, returning = false }) {
   const cta = (
     <button
       onClick={onStart}
-      className="w-full rounded-xl bg-emerald-600 px-4 py-3 text-base font-semibold text-white shadow-sm active:bg-emerald-700"
+      className="w-full rounded-xl bg-gradient-to-br from-emerald-400 to-emerald-600 shadow-[0_0_22px_rgba(16,185,129,0.4)] px-4 py-3 text-base font-semibold text-white shadow-sm active:brightness-90"
     >
       {returning ? "Continue" : "Start your fitness journey"}
     </button>
