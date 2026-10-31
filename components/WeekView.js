@@ -1,15 +1,51 @@
+"use client";
+
+import { useState } from "react";
 import { weekData, weekStats } from "@/lib/week";
 
 const DAY_LETTER = ["S", "M", "T", "W", "T", "F", "S"];
 
 // Last 7 days as small bars: emerald within budget, amber over, grey if nothing logged.
 // Never red. Days with nothing logged are not counted or shown as "missed".
+// A "Show insight" button asks the server for one short, friendly sentence.
 export default function WeekView({ days, target }) {
+  const [insight, setInsight] = useState(null); // { text, source }
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+
   const week = weekData(days, target);
   const stats = weekStats(week, target);
   if (stats.loggedDays === 0) return null;
 
   const top = Math.max(target * 1.3, ...week.map((d) => d.kcal)); // bar scale
+
+  const getInsight = async () => {
+    setLoading(true);
+    setError("");
+    try {
+      const res = await fetch("/api/insight", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          target,
+          // Only days with meals, and only meal names + kcal: nothing else leaves the browser.
+          days: week
+            .filter((d) => d.logged)
+            .map((d) => ({
+              date: d.date,
+              kcal: d.kcal,
+              meals: d.meals.map((m) => ({ text: m.text, kcal: m.kcal })),
+            })),
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error();
+      setInsight({ text: data.insight, source: data.source });
+    } catch {
+      setError("I couldn't get an insight right now. Please try again.");
+    }
+    setLoading(false);
+  };
 
   return (
     <div className="mt-6 rounded-xl border border-slate-200 bg-white p-4">
@@ -42,6 +78,24 @@ export default function WeekView({ days, target }) {
         Within budget on {stats.withinDays} of {stats.loggedDays} logged{" "}
         {stats.loggedDays === 1 ? "day" : "days"}. Average {stats.avgKcal} kcal a day.
       </p>
+
+      {insight ? (
+        <div className="mt-3 rounded-lg bg-emerald-50 p-3 text-sm text-emerald-900">
+          <p>{insight.text}</p>
+          <p className="mt-1 text-xs text-emerald-700">
+            {insight.source === "ai" ? "AI insight" : "Simple insight"}
+          </p>
+        </div>
+      ) : (
+        <button
+          onClick={getInsight}
+          disabled={loading}
+          className="mt-3 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 disabled:opacity-50"
+        >
+          {loading ? "Thinking..." : "Show insight"}
+        </button>
+      )}
+      {error && <p className="mt-2 text-sm text-amber-700">{error}</p>}
     </div>
   );
 }
