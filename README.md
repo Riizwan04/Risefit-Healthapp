@@ -14,12 +14,12 @@ Jose, 30, a student in Goa, one of three people I interviewed. He gained weight 
 
 ## What it does
 
-1. **Welcome, then one-tap start.** The app always opens on a welcome screen with an app preview and a sample meal (and a Continue button if you already have a saved goal). New visitors go on to the goal picker (Lose slowly -250, Lose steadily -400, Stay the same 0). No account. Optionally tune age, height, weight and sex. After that, a top bar with chips switches between **Today** (budget, guidance, log a meal), **Summary**, **Workout** and **7 days**.
+1. **Welcome, then one-tap start.** The app always opens on a welcome screen with a drawn thali, floating kcal tags and a sample meal (and a Continue button if you already have a saved goal). New visitors go on to the goal picker (Lose slowly -250, Lose steadily -400, Stay the same 0). No account. Optionally tune age, height, weight and sex. After that, a floating bottom dock with icons switches between **Today** (budget, guidance, log a meal), **Summary**, **Workout** and **7 days**.
 2. **Daily budget.** Mifflin-St Jeor BMR × 1.35 activity, minus the deficit. The deficit is capped at 500 kcal/day and the target never goes below 1500 kcal (men) or 1200 kcal (women).
 3. **Log meals in plain words or a photo.** Type "2 butter rotis, dal fry, dahi" (Hinglish works too), take a photo with the in-page camera, or upload one. AI estimates the calories.
 4. **Check and correct.** Each item shows its kcal, protein, any hidden fat, a calorie range ("about 450-600") and a one-line reason. Change quantities in half steps, pick breakfast, lunch, snack or dinner, then add it. Meals are marked as AI estimate or fallback estimate, and "edited" if you changed them.
 5. **Catch-up plan.** After a heavy meal or going over budget, RiseFit suggests a light next meal and a short walk. It never says "skip a meal".
-6. **A reason to come back, without guilt.** The Today screen has a progress ring, colour tiles (protein, meals, workout, water), a greeting, one "Next step" card (including a calm note if lunch or dinner has not been logged) and a tip of the day. Badges are kept for good and count totals, never streaks. There are no push notifications and no guilt wording.
+6. **A reason to come back, without guilt.** The Today screen has a glowing segmented progress arc, colour tiles (protein, meals, workout, water), a greeting, one "Next step" card (including a calm note if lunch or dinner has not been logged) and a tip of the day. Badges are kept for good and count totals, never streaks. There are no push notifications and no guilt wording.
 7. **Daily summary and 7-day view.** Today's highlights, weekly wins (days within budget, meals, workouts), a bar for each of the last 7 days, and an optional one-sentence AI insight.
 8. **Today's workout.** A gentle, text-only suggestion each day (walks, no-equipment strength, a rest day) at Beginner or Regular level, with a week strip, a tick for each exercise and a timer.
 9. **Guilt-free colours.** Emerald when on track, amber when over budget. Red is used only for safety alerts.
@@ -43,8 +43,8 @@ Jose, 30, a student in Goa, one of three people I interviewed. He gained weight 
 app/page.js                  first screen, budget card, wiring
 app/api/parse-meal/route.js  server route: safety check -> Gemini (text + photo) -> demo fallback
 app/api/insight/route.js     server route: one-sentence 7-day insight, rule-based fallback
-components/                  Landing, PhonePreview, SampleMeal, TabBar, BudgetCard, Ring, Tiles, Greeting, NextStep,
-                             MealLog, ItemChips, CameraCapture, CatchUpCard, Toast, DailySummary, Highlights,
+components/                  Landing, Thali, SampleMeal, AppHeader, Dock, BudgetCard, SegArc, Tiles, Greeting, NextStep,
+                             MealLog, MiniPlate, ItemChips, CameraCapture, CatchUpCard, Toast, DailySummary, Highlights,
                              WeekView, Badges, WorkoutCard
 lib/budget.js                calorie target maths
 lib/safety.js                red-flag detection
@@ -90,4 +90,4 @@ Wearables, workout videos, challenges and streaks, social feeds, caretaker/hospi
 - Estimates by the [Google Gemini API](https://ai.google.dev).
 - Calorie formula: Mifflin-St Jeor equation.
 - Built with the help of Claude Code (AI-assisted); AI use is disclosed in the report.
-- No third-party images, audio or video are used. Icons are plain emoji, and the logo, hero and phone preview are drawn with CSS and SVG.
+- No third-party images, audio or video are used. Icons are plain emoji, and the logo, the thali, the plate icons, the arc and the gauge are drawn with CSS and SVG. The look is a dark "glass" theme with emerald, sky, teal and violet glows.
