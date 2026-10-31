@@ -59,6 +59,7 @@ export default function WorkoutCard() {
   const doneToday = !!done[today];
   const doneThisWeek = lastDates(7).filter((d) => done[d]).length;
   const finished = remaining === 0;
+  const progress = Math.min(Math.max(1 - remaining / (plan.minutes * 60), 0), 1); // how much of the gauge is filled
 
   const chooseLevel = (l) => {
     setLevel(l);
@@ -96,7 +97,7 @@ export default function WorkoutCard() {
                 <span
                   className={`flex h-9 w-9 items-center justify-center rounded-full text-base ${
                     done[key]
-                      ? "bg-violet-600 text-white"
+                      ? "bg-gradient-to-br from-violet-400 to-violet-600 text-white"
                       : isToday
                         ? "border-2 border-violet-400 bg-violet-500/10"
                         : "bg-white/10"
@@ -118,7 +119,7 @@ export default function WorkoutCard() {
               <button
                 key={l}
                 onClick={() => chooseLevel(l)}
-                className={`px-2 py-1 ${level === l ? "bg-violet-600 text-white" : "bg-white/5 text-slate-300"}`}
+                className={`px-2 py-1 ${level === l ? "bg-gradient-to-br from-violet-400 to-violet-600 text-white" : "bg-white/5 text-slate-300"}`}
               >
                 {LEVEL_LABEL[l]}
               </button>
@@ -130,14 +131,47 @@ export default function WorkoutCard() {
           {plan.title} · about {plan.minutes} min
         </p>
 
-        {/* Timer */}
-        <div className="mt-3 flex items-center justify-between rounded-xl bg-violet-500/10 p-3">
-          <p className="text-3xl font-bold tabular-nums text-violet-100">{mmss(remaining)}</p>
-          <div className="flex gap-2">
+        {/* Timer: a gauge that fills as the time passes */}
+        <div className="relative mt-3 overflow-hidden rounded-2xl border border-violet-400/20 bg-violet-500/10 p-3">
+          <div className="pointer-events-none absolute left-1/2 top-4 h-28 w-56 -translate-x-1/2 rounded-full bg-violet-500/35 blur-3xl" />
+          <div className="relative">
+            <svg viewBox="0 0 320 160" className="w-full">
+              <defs>
+                <linearGradient id="gaugeGrad" x1="0" y1="0" x2="1" y2="0">
+                  <stop offset="0" stopColor="#c4b5fd" />
+                  <stop offset="1" stopColor="#7c3aed" />
+                </linearGradient>
+              </defs>
+              <path d="M30 150 A130 130 0 0 1 290 150" fill="none" stroke="rgba(255,255,255,0.09)" strokeWidth="14" strokeLinecap="round" />
+              <path
+                d="M30 150 A130 130 0 0 1 290 150"
+                fill="none"
+                stroke="url(#gaugeGrad)"
+                strokeWidth="14"
+                strokeLinecap="round"
+                pathLength="100"
+                strokeDasharray="100"
+                strokeDashoffset={100 * (1 - progress)}
+                style={{ filter: "drop-shadow(0 0 8px rgba(167,139,250,0.9))", transition: "stroke-dashoffset 0.5s linear" }}
+              />
+              <circle
+                cx={160 + 130 * Math.cos(Math.PI * (1 - progress))}
+                cy={150 - 130 * Math.sin(Math.PI * (1 - progress))}
+                r="9"
+                fill="#fff"
+                style={{ filter: "drop-shadow(0 0 8px #a78bfa)" }}
+              />
+            </svg>
+            <div className="absolute inset-x-0 top-[42%] text-center">
+              <p className="text-5xl font-extrabold tabular-nums tracking-tight text-violet-50">{mmss(remaining)}</p>
+              <p className="text-xs text-violet-300">of {mmss(plan.minutes * 60)}</p>
+            </div>
+          </div>
+          <div className="relative mt-1 flex gap-2">
             {endAt ? (
               <button
                 onClick={() => setEndAt(null)}
-                className="rounded-lg border border-violet-400/40 bg-white/5 px-3 py-2 text-sm font-semibold text-violet-200"
+                className="flex-1 rounded-xl border border-violet-400/40 bg-white/5 py-2.5 text-sm font-semibold text-violet-200"
               >
                 Pause
               </button>
@@ -145,7 +179,7 @@ export default function WorkoutCard() {
               !finished && (
                 <button
                   onClick={() => setEndAt(Date.now() + remaining * 1000)}
-                  className="rounded-lg bg-violet-600 px-3 py-2 text-sm font-semibold text-white"
+                  className="flex-1 rounded-xl bg-gradient-to-br from-violet-400 to-violet-600 py-2.5 text-sm font-semibold text-white shadow-[0_0_22px_rgba(124,58,237,0.5)]"
                 >
                   {remaining === plan.minutes * 60 ? "Start timer" : "Resume"}
                 </button>
@@ -157,7 +191,7 @@ export default function WorkoutCard() {
                   setEndAt(null);
                   setRemaining(plan.minutes * 60);
                 }}
-                className="rounded-lg border border-white/15 bg-white/5 px-3 py-2 text-sm text-slate-300"
+                className="rounded-xl border border-white/15 bg-white/5 px-5 py-2.5 text-sm text-slate-300"
               >
                 Reset
               </button>
@@ -186,7 +220,7 @@ export default function WorkoutCard() {
                 </span>
                 <span
                   className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full border text-xs ${
-                    ticks[it.id] ? "border-violet-600 bg-violet-600 text-white" : "border-white/15 text-transparent"
+                    ticks[it.id] ? "border-violet-600 bg-gradient-to-br from-violet-400 to-violet-600 text-white" : "border-white/15 text-transparent"
                   }`}
                 >
                   ✓
@@ -200,7 +234,7 @@ export default function WorkoutCard() {
         <button
           onClick={() => markDone(!doneToday)}
           className={`mt-3 rounded-lg px-4 py-2 text-sm font-semibold ${
-            doneToday ? "bg-violet-500/20 text-violet-200" : "bg-violet-600 text-white"
+            doneToday ? "bg-violet-500/20 text-violet-200" : "bg-gradient-to-br from-violet-400 to-violet-600 text-white"
           }`}
         >
           {doneToday ? "Done ✓" : "Mark done"}
