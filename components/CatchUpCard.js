@@ -3,8 +3,8 @@ export default function CatchUpCard({ plan }) {
   if (!plan) return null;
   const style =
     plan.tone === "over"
-      ? "border-amber-200 bg-amber-50 text-amber-900"
-      : "border-emerald-200 bg-emerald-50 text-emerald-900";
+      ? "border-amber-400/30 bg-amber-500/10 text-amber-100"
+      : "border-emerald-400/30 bg-emerald-500/10 text-emerald-100";
   return (
     <div className={`mt-4 rounded-xl border p-4 ${style}`}>
       <h2 className="text-sm font-semibold">{plan.title}</h2>

@@ -49,31 +49,31 @@ export default function CameraCapture({ onCapture, onClose }) {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 p-4">
-      <div className="w-full max-w-md rounded-2xl bg-white p-3">
+      <div className="w-full max-w-md rounded-2xl bg-white/5 p-3">
         <video
           ref={videoRef}
           autoPlay
           playsInline
           muted
-          className={`w-full rounded-xl bg-slate-900 ${ready ? "" : "hidden"}`}
+          className={`w-full rounded-xl bg-black ${ready ? "" : "hidden"}`}
         />
         {!ready && !error && (
-          <p className="p-6 text-center text-sm text-slate-500">Opening camera...</p>
+          <p className="p-6 text-center text-sm text-slate-400">Opening camera...</p>
         )}
-        {error && <p className="p-3 text-sm text-amber-700">{error}</p>}
+        {error && <p className="p-3 text-sm text-amber-300">{error}</p>}
         <div className="mt-3 flex gap-2">
           <button
             type="button"
             onClick={capture}
             disabled={!ready}
-            className="flex-1 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white disabled:bg-slate-300"
+            className="flex-1 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white disabled:bg-white/10"
           >
             Take photo
           </button>
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg border border-slate-300 px-4 py-2 text-sm text-slate-700"
+            className="rounded-lg border border-white/15 px-4 py-2 text-sm text-slate-200"
           >
             Cancel
           </button>

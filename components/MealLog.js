@@ -39,9 +39,9 @@ export default function MealLog({ meals, onAdd, onRemove, onUpdate }) {
   const [cameraOpen, setCameraOpen] = useState(false); // live in-page camera
   const cameraInput = useRef(null); // fallback: phone camera app via the file input
 
-  const field = "rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm";
+  const field = "rounded-lg border border-white/15 bg-white/5 px-3 py-2 text-sm";
   const photoBtn =
-    "flex flex-1 cursor-pointer items-center justify-center rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700";
+    "flex flex-1 cursor-pointer items-center justify-center rounded-lg border border-white/15 bg-white/5 px-3 py-2 text-sm text-slate-200";
 
   const PHOTO_ERROR = "I couldn't read that photo, please type what you ate.";
 
@@ -137,7 +137,7 @@ export default function MealLog({ meals, onAdd, onRemove, onUpdate }) {
 
   return (
     <div className="mt-6" id="log-meal">
-      <h2 className="text-base font-semibold text-slate-700">Log a meal</h2>
+      <h2 className="text-base font-semibold text-slate-200">Log a meal</h2>
 
       <form onSubmit={estimate} className="mt-2">
         <div className="flex gap-2">
@@ -151,7 +151,7 @@ export default function MealLog({ meals, onAdd, onRemove, onUpdate }) {
           <button
             type="submit"
             disabled={(!text.trim() && !photo) || loading}
-            className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white disabled:bg-slate-300"
+            className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white disabled:bg-white/10"
           >
             {loading ? "..." : "Estimate"}
           </button>
@@ -205,7 +205,7 @@ export default function MealLog({ meals, onAdd, onRemove, onUpdate }) {
             alt="Your meal"
             className="h-16 w-16 rounded-lg object-cover"
           />
-          <button onClick={removePhoto} className="text-sm text-slate-500 underline">
+          <button onClick={removePhoto} className="text-sm text-slate-400 underline">
             Remove
           </button>
         </div>
@@ -215,18 +215,18 @@ export default function MealLog({ meals, onAdd, onRemove, onUpdate }) {
       {alert && (
         <div
           role="alert"
-          className="mt-3 rounded-xl border border-red-300 bg-red-50 p-3 text-sm text-red-800"
+          className="mt-3 rounded-xl border border-red-400/40 bg-red-500/10 p-3 text-sm text-red-200"
         >
           {alert}
         </div>
       )}
 
-      {error && <p className="mt-3 text-sm text-amber-700">{error}</p>}
+      {error && <p className="mt-3 text-sm text-amber-300">{error}</p>}
 
       {/* Estimate preview: user can correct the kcal before it is saved */}
       {preview && (
-        <div className="mt-3 rounded-xl border border-emerald-200 bg-white p-3">
-          <label className="mb-2 flex items-center gap-2 text-sm text-slate-600">
+        <div className="mt-3 rounded-xl border border-emerald-400/30 bg-white/5 p-3">
+          <label className="mb-2 flex items-center gap-2 text-sm text-slate-300">
             Meal
             <select
               className={field}
@@ -249,14 +249,14 @@ export default function MealLog({ meals, onAdd, onRemove, onUpdate }) {
             />
           )}
           {preview.note && (
-            <p className="mt-2 text-xs text-slate-500">
+            <p className="mt-2 text-xs text-slate-400">
               {preview.source === "ai" ? "Why: " : ""}
               {preview.note}
             </p>
           )}
           <div className="mt-3 flex items-center gap-2">
             {hasItems ? (
-              <p className="text-sm text-slate-700">
+              <p className="text-sm text-slate-200">
                 Total: <strong>{total} kcal</strong>
                 {mealRange(preview.items) && (
                   <> (about {mealRange(preview.items).low}–{mealRange(preview.items).high})</>
@@ -265,7 +265,7 @@ export default function MealLog({ meals, onAdd, onRemove, onUpdate }) {
               </p>
             ) : (
               <>
-                <label className="text-sm text-slate-600" htmlFor="kcal">
+                <label className="text-sm text-slate-300" htmlFor="kcal">
                   Total kcal
                 </label>
                 <input
@@ -283,13 +283,13 @@ export default function MealLog({ meals, onAdd, onRemove, onUpdate }) {
             <button
               onClick={confirmAdd}
               disabled={!canAdd}
-              className="ml-auto rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white disabled:bg-slate-300"
+              className="ml-auto rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white disabled:bg-white/10"
             >
               Add
             </button>
             <button
               onClick={() => setPreview(null)}
-              className="text-sm text-slate-500 underline"
+              className="text-sm text-slate-400 underline"
             >
               Cancel
             </button>
@@ -298,10 +298,10 @@ export default function MealLog({ meals, onAdd, onRemove, onUpdate }) {
       )}
 
       {meals.length === 0 ? (
-        <div className="mt-4 rounded-xl border border-dashed border-emerald-200 bg-white p-4 text-center">
+        <div className="mt-4 rounded-xl border border-dashed border-emerald-400/30 bg-white/5 p-4 text-center">
           <p className="text-2xl">🍽️</p>
-          <p className="mt-1 text-sm font-medium text-slate-700">Your plate is empty</p>
-          <p className="text-xs text-slate-500">Type a meal, snap a photo, or tap an example:</p>
+          <p className="mt-1 text-sm font-medium text-slate-200">Your plate is empty</p>
+          <p className="text-xs text-slate-400">Type a meal, snap a photo, or tap an example:</p>
           <div className="mt-3 flex flex-wrap justify-center gap-2">
             {EXAMPLES.map((ex) => (
               <button
@@ -311,7 +311,7 @@ export default function MealLog({ meals, onAdd, onRemove, onUpdate }) {
                   setText(ex);
                   document.querySelector("#log-meal input")?.focus();
                 }}
-                className="rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs text-emerald-800"
+                className="rounded-full border border-emerald-400/30 bg-emerald-500/10 px-3 py-1 text-xs text-emerald-200"
               >
                 {ex}
               </button>
@@ -319,38 +319,38 @@ export default function MealLog({ meals, onAdd, onRemove, onUpdate }) {
           </div>
         </div>
       ) : (
-        <ul className="mt-4 divide-y divide-slate-200 rounded-xl border border-slate-200 bg-white">
+        <ul className="mt-4 divide-y divide-white/10 rounded-xl border border-white/10 bg-white/5">
           {meals.map((m) => (
             <li key={m.id} className="flex gap-3 px-3 py-2">
-              <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-base">
+              <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-emerald-500/10 text-base">
                 {TYPE_ICON[m.type] || "🍽️"}
               </span>
               <div className="min-w-0 flex-1">
               <div className="flex items-center justify-between">
                 <span className="min-w-0 flex-1 truncate text-sm">{m.text}</span>
-                <span className="ml-3 text-sm text-slate-600">{m.kcal} kcal</span>
+                <span className="ml-3 text-sm text-slate-300">{m.kcal} kcal</span>
                 {/* Slate, not red: removing a meal isn't a danger action */}
                 <button
                   onClick={() => onRemove(m.id)}
-                  className="ml-3 text-sm text-slate-400"
+                  className="ml-3 text-sm text-slate-500"
                   aria-label={`Remove ${m.text}`}
                 >
                   ✕
                 </button>
               </div>
               {(TYPE_LABEL[m.type] || SOURCE_LABEL[m.source]) && (
-                <p className="mt-0.5 text-xs text-slate-400">
+                <p className="mt-0.5 text-xs text-slate-500">
                   {[TYPE_LABEL[m.type], SOURCE_LABEL[m.source], isEdited(m) && "edited"]
                     .filter(Boolean)
                     .join(" · ")}
                 </p>
               )}
               {m.items && mealRange(m.items) && (
-                <p className="mt-0.5 text-xs text-slate-500">
+                <p className="mt-0.5 text-xs text-slate-400">
                   About {mealRange(m.items).low}–{mealRange(m.items).high} kcal
                 </p>
               )}
-              {m.note && <p className="mt-0.5 text-xs text-slate-500">Why: {m.note}</p>}
+              {m.note && <p className="mt-0.5 text-xs text-slate-400">Why: {m.note}</p>}
               {m.items && (
                 <div className="mt-2">
                   {/* Changing a quantity updates this meal and the daily budget at once */}

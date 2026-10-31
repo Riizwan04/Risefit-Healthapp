@@ -36,7 +36,7 @@ const GOALS = [
 // Permanent safety notice, shown on every screen.
 function Disclaimer() {
   return (
-    <p className="mt-8 rounded-lg border border-slate-200 bg-white p-3 text-center text-xs text-slate-500">
+    <p className="mt-8 rounded-lg border border-white/10 bg-white/5 p-3 text-center text-xs text-slate-400">
       Not Medical Advice. RiseFit gives general estimates only. It cannot
       diagnose or treat anything. If you feel unwell, see a doctor.
     </p>
@@ -61,15 +61,15 @@ function Welcome({ onStart, onBack }) {
     });
 
   const input =
-    "w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm";
+    "w-full rounded-lg border border-white/15 bg-white/5 px-3 py-2 text-sm";
 
   return (
     <div>
-      <button onClick={onBack} className="text-sm text-slate-500 underline">
+      <button onClick={onBack} className="text-sm text-slate-400 underline">
         Back
       </button>
-      <h1 className="mt-4 text-3xl font-bold text-emerald-600">What's your goal?</h1>
-      <p className="mt-2 text-slate-600">
+      <h1 className="mt-4 text-3xl font-bold text-emerald-400">What's your goal?</h1>
+      <p className="mt-2 text-slate-300">
         Pick one to begin. You can change it any time.
       </p>
 
@@ -86,8 +86,8 @@ function Welcome({ onStart, onBack }) {
       </div>
 
       {/* Optional, collapsed by default */}
-      <details className="mt-6 rounded-xl border border-slate-200 bg-white p-3">
-        <summary className="cursor-pointer text-sm font-medium text-slate-700">
+      <details className="mt-6 rounded-xl border border-white/10 bg-white/5 p-3">
+        <summary className="cursor-pointer text-sm font-medium text-slate-200">
           Tune my numbers
         </summary>
         <div className="mt-3 grid grid-cols-2 gap-3 text-sm">
@@ -136,7 +136,7 @@ function Welcome({ onStart, onBack }) {
             />
           </label>
         </div>
-        <p className="mt-2 text-xs text-slate-500">
+        <p className="mt-2 text-xs text-slate-400">
           Then tap a goal above. Defaults: male, 23, 172 cm, 72 kg.
         </p>
       </details>
@@ -147,8 +147,8 @@ function Welcome({ onStart, onBack }) {
 // Shown on a tab that has nothing to display yet, with a shortcut to log a meal.
 function EmptyTab({ text, onLog }) {
   return (
-    <div className="mt-6 rounded-xl border border-slate-200 bg-white p-4 text-center">
-      <p className="text-sm text-slate-600">{text}</p>
+    <div className="mt-6 rounded-xl border border-white/10 bg-white/5 p-4 text-center">
+      <p className="text-sm text-slate-300">{text}</p>
       <button
         onClick={onLog}
         className="mt-3 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white"

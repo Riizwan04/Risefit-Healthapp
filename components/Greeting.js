@@ -8,8 +8,8 @@ export default function Greeting({ welcomeBack }) {
 
   return (
     <div className="mt-1">
-      <h2 className="text-2xl font-bold text-slate-800">{hello}</h2>
-      <p className="text-sm text-slate-500">
+      <h2 className="text-2xl font-bold text-slate-100">{hello}</h2>
+      <p className="text-sm text-slate-400">
         {welcomeBack ? "Good to see you again. Pick up where you left off." : date}
       </p>
     </div>

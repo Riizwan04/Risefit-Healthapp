@@ -27,19 +27,19 @@ export default function Highlights({ meals, target }) {
   ];
 
   return (
-    <div className="mt-4 rounded-xl border border-slate-200 bg-white p-4">
-      <h2 className="text-base font-semibold text-slate-700">Today's highlights</h2>
+    <div className="mt-4 rounded-xl border border-white/10 bg-white/5 p-4">
+      <h2 className="text-base font-semibold text-slate-200">Today's highlights</h2>
       <ul className="mt-3 space-y-2">
         {rows.map((r) => (
           <li key={r.label} className="flex items-center gap-3 text-sm">
             <span
               className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-xs ${
-                r.ok ? "bg-emerald-500 text-white" : "bg-slate-200 text-transparent"
+                r.ok ? "bg-emerald-500 text-white" : "bg-white/10 text-transparent"
               }`}
             >
               ✓
             </span>
-            <span className={r.ok ? "text-slate-800" : "text-slate-400"}>{r.label}</span>
+            <span className={r.ok ? "text-slate-100" : "text-slate-500"}>{r.label}</span>
           </li>
         ))}
       </ul>

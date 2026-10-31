@@ -9,13 +9,13 @@ const STEP = 0.5;
 // If onChange is given, each chip gets a -/+ stepper for the quantity.
 export default function ItemChips({ items, onChange }) {
   const stepBtn =
-    "flex h-6 w-6 items-center justify-center rounded-full border border-slate-300 bg-white text-sm text-slate-600 disabled:opacity-30";
+    "flex h-6 w-6 items-center justify-center rounded-full border border-white/15 bg-white/5 text-sm text-slate-300 disabled:opacity-30";
 
   return (
     <ul className="space-y-1.5">
       {items.map((it, idx) => (
         <li key={idx}>
-          <div className="inline-flex items-center gap-2 rounded-lg border border-slate-200 bg-slate-50 px-2 py-1 text-xs text-slate-700">
+          <div className="inline-flex items-center gap-2 rounded-lg border border-white/10 bg-white/5 px-2 py-1 text-xs text-slate-200">
             {onChange && (
               <button
                 type="button"
@@ -43,7 +43,7 @@ export default function ItemChips({ items, onChange }) {
             )}
           </div>
           {it.hidden_fat && (
-            <p className="ml-1 mt-0.5 text-xs text-slate-500">
+            <p className="ml-1 mt-0.5 text-xs text-slate-400">
               Hidden fat: {it.hidden_fat}
             </p>
           )}

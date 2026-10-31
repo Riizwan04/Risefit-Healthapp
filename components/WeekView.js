@@ -56,33 +56,33 @@ export default function WeekView({ days, target }) {
   };
 
   return (
-    <div className="mt-6 rounded-xl border border-slate-200 bg-white p-4">
-      <h2 className="text-base font-semibold text-slate-700">Your last 7 days</h2>
+    <div className="mt-6 rounded-xl border border-white/10 bg-white/5 p-4">
+      <h2 className="text-base font-semibold text-slate-200">Your last 7 days</h2>
 
       {/* Weekly wins: only things you did */}
       <div className="mt-3 grid grid-cols-3 gap-2 text-center">
-        <div className="rounded-lg bg-emerald-50 p-2">
-          <p className="text-lg font-semibold text-emerald-900">
+        <div className="rounded-lg bg-emerald-500/10 p-2">
+          <p className="text-lg font-semibold text-emerald-100">
             {stats.withinDays}/{stats.loggedDays}
           </p>
-          <p className="text-[11px] text-emerald-700">days within budget</p>
+          <p className="text-[11px] text-emerald-300">days within budget</p>
         </div>
-        <div className="rounded-lg bg-sky-50 p-2">
-          <p className="text-lg font-semibold text-sky-900">
+        <div className="rounded-lg bg-sky-500/10 p-2">
+          <p className="text-lg font-semibold text-sky-100">
             {week.reduce((s, d) => s + d.meals.length, 0)}
           </p>
-          <p className="text-[11px] text-sky-700">meals logged</p>
+          <p className="text-[11px] text-sky-300">meals logged</p>
         </div>
-        <div className="rounded-lg bg-violet-50 p-2">
-          <p className="text-lg font-semibold text-violet-900">{workoutDays}</p>
-          <p className="text-[11px] text-violet-700">workouts done</p>
+        <div className="rounded-lg bg-violet-500/10 p-2">
+          <p className="text-lg font-semibold text-violet-100">{workoutDays}</p>
+          <p className="text-[11px] text-violet-300">workouts done</p>
         </div>
       </div>
 
       <div className="mt-3 flex items-end justify-between gap-1" style={{ height: 96 }}>
         {week.map((d) => {
           const color = !d.logged
-            ? "bg-slate-200"
+            ? "bg-white/10"
             : d.kcal > target
               ? "bg-amber-400"
               : "bg-emerald-500";
@@ -94,7 +94,7 @@ export default function WeekView({ days, target }) {
           );
         })}
       </div>
-      <div className="mt-1 flex justify-between gap-1 text-xs text-slate-500">
+      <div className="mt-1 flex justify-between gap-1 text-xs text-slate-400">
         {week.map((d) => (
           <span key={d.date} className="flex-1 text-center">
             {DAY_LETTER[new Date(d.date + "T00:00:00").getDay()]}
@@ -102,15 +102,15 @@ export default function WeekView({ days, target }) {
         ))}
       </div>
 
-      <p className="mt-3 text-sm text-slate-700">
+      <p className="mt-3 text-sm text-slate-200">
         Within budget on {stats.withinDays} of {stats.loggedDays} logged{" "}
         {stats.loggedDays === 1 ? "day" : "days"}. Average {stats.avgKcal} kcal a day.
       </p>
 
       {insight ? (
-        <div className="mt-3 rounded-lg bg-emerald-50 p-3 text-sm text-emerald-900">
+        <div className="mt-3 rounded-lg bg-emerald-500/10 p-3 text-sm text-emerald-100">
           <p>{insight.text}</p>
-          <p className="mt-1 text-xs text-emerald-700">
+          <p className="mt-1 text-xs text-emerald-300">
             {insight.source === "ai" ? "AI insight" : "Simple insight"}
           </p>
         </div>
@@ -118,12 +118,12 @@ export default function WeekView({ days, target }) {
         <button
           onClick={getInsight}
           disabled={loading}
-          className="mt-3 rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-700 disabled:opacity-50"
+          className="mt-3 rounded-lg border border-white/15 bg-white/5 px-3 py-2 text-sm text-slate-200 disabled:opacity-50"
         >
           {loading ? "Thinking..." : "Show insight"}
         </button>
       )}
-      {error && <p className="mt-2 text-sm text-amber-700">{error}</p>}
+      {error && <p className="mt-2 text-sm text-amber-300">{error}</p>}
     </div>
   );
 }

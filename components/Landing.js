@@ -43,7 +43,7 @@ export default function Landing({ onStart, returning = false }) {
 
       <div className="mt-5">{cta}</div>
 
-      <p className="mt-5 text-center text-slate-600">
+      <p className="mt-5 text-center text-slate-300">
         Say what you ate in your own words. We'll do the maths and keep you on
         track, without guilt.
       </p>
@@ -58,8 +58,8 @@ export default function Landing({ onStart, returning = false }) {
 
       <ul className="mt-6 space-y-3">
         {POINTS.map((p) => (
-          <li key={p.text} className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white p-3 text-sm text-slate-700">
-            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-lg">
+          <li key={p.text} className="flex items-center gap-3 rounded-xl border border-white/10 bg-white/5 p-3 text-sm text-slate-200">
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-emerald-500/10 text-lg">
               {p.icon}
             </span>
             {p.text}
@@ -68,7 +68,7 @@ export default function Landing({ onStart, returning = false }) {
       </ul>
 
       <div className="mt-8">{cta}</div>
-      <p className="mt-3 text-center text-xs text-slate-500">
+      <p className="mt-3 text-center text-xs text-slate-400">
         No signup. Nothing to install. Your meal log is saved on your device, not
         in an account.
       </p>

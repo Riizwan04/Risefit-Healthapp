@@ -26,7 +26,7 @@ export default function Ring({ value, max, strokeClass, size = 168, stroke = 14,
       aria-valuemax={100}
     >
       <svg width={size} height={size} className="-rotate-90">
-        <circle cx={size / 2} cy={size / 2} r={r} fill="none" strokeWidth={stroke} className="stroke-slate-100" />
+        <circle cx={size / 2} cy={size / 2} r={r} fill="none" strokeWidth={stroke} className="stroke-white/10" />
         <circle
           cx={size / 2}
           cy={size / 2}

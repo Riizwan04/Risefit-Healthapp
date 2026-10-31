@@ -1,3 +1,24 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Dark glass theme: near-black background with soft emerald and violet glows. */
+html {
+  color-scheme: dark; /* native controls (select, inputs) follow the dark theme */
+}
+body {
+  background:
+    radial-gradient(900px 520px at 50% -8%, rgba(16, 185, 129, 0.26), transparent 62%),
+    radial-gradient(560px 420px at 100% 100%, rgba(167, 139, 250, 0.16), transparent 62%),
+    radial-gradient(520px 420px at 0% 100%, rgba(45, 212, 191, 0.12), transparent 62%),
+    #070b0a;
+  background-attachment: fixed;
+}
+
+@layer components {
+  /* A frosted-glass card: the basic building block of every screen. */
+  .glass {
+    @apply rounded-2xl border border-white/10 bg-white/5 backdrop-blur-md;
+    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.35);
+  }
+}
