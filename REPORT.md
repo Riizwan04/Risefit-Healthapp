@@ -62,7 +62,7 @@
 | ID | Feature | Build now / Later / Never | Reason |
 |---|---|---|---|
 | F01 | Food photo to calories | Build now | Built for both a typed description and a photo. It removes database searching, the logging effort from Q1 reason 2. The user always checks and edits the result. |
-| F02 | Profile and goals | Build now | One tap on a goal starts the app with default numbers. No account. Age, height, weight and sex are optional. |
+| F02 | Profile and goals | Build now | One tap on a goal starts the app with default numbers. No account. Age, height, weight and sex are optional. After Jose's test, a fourth option lets the user type their own daily calories, kept inside the safety limits. |
 | F03 | Activity tracking | Build now (light) | Built as a Today's workout card: one gentle suggestion a day (walks, no-equipment strength, a rest day) at Beginner or Regular level, with a Done tick. It tracks no steps, distance or calories burned. It is rule-based and text only. |
 | F04 | Diet plan | Build now | Built as a daily calorie budget with a capped deficit and a safe minimum. No water target and no meal plan, to avoid giving diet prescriptions. |
 | F05 | Progress tracker | Build now (light) | Built as a 7-day view: a bar for each day, weekly wins (days within budget, meals logged, workouts done), a short insight on request, and badges that are kept for good. Meals for recent days are kept in the browser only. There are no streaks, no weight tracking and no long-term trends yet. |
@@ -98,7 +98,7 @@
 
 **The core experience:**
 
-- **First 2 minutes:** Jose opens the link, with no login and nothing to install. He taps one goal (Lose slowly, Lose steadily or Stay the same). The welcome screen shows a drawn plate with floating calorie tags and a sample meal to try, then a glowing segmented budget arc appears straight away, showing kcal left today. He types or photographs his first meal, checks the item breakdown, changes a quantity if it looks wrong, and taps Add. The budget updates at once.
+- **First 2 minutes:** Jose opens the link, with no login and nothing to install. He taps one goal (Lose slowly, Lose steadily or Stay the same), or types his own daily calories. The welcome screen shows a drawn plate with floating calorie tags and a sample meal to try, then a glowing segmented budget arc appears straight away, showing kcal left today. He types or photographs his first meal, checks the item breakdown, changes a quantity if it looks wrong, and taps Add. The budget updates at once.
 - **Normal day:** he logs lunch. If it is a heavy meal, a calm card suggests a light next meal and a short walk. If he goes over budget, the card turns amber, not red, and the catch-up plan says it is one day and not to skip meals. At any time the Today's summary card shows eaten against target, Today's workout suggests a gentle exercise for the day, and the 7-day view shows how the week is going. Red appears only for safety alerts, and a "Not Medical Advice" notice is on every screen.
 
 **My three hardest calls:**
@@ -109,7 +109,21 @@
 
 ## Q5. User test
 
-TODO: fill after testing
+**Who tested it:** Jose, 30, a student in Goa. He is the person I interviewed for Q1 and the customer in Q2, and he agreed to test the app.
+
+**What he did:** I sent him the live link. He opened it and used the app himself, then gave me his feedback in his own words. I did not record his device or browser, and I did not time the session.
+
+**What he pointed out:**
+- The welcome page showed "Start your fitness journey" twice, which he found repetitive. He suggested removing one.
+- There were only three ways to set calories (the three goals). He wanted an option to set his own calories.
+
+**What he liked:** the Take photo option, the badges, and the workout, which gives a different muscle target every day, including walking.
+
+**What I changed:**
+1. I removed the second "Start your fitness journey" button. The welcome page now has one, with the "No signup. Nothing to install." note under it.
+2. I added a fourth option to the goal screen, "Or set your own daily calories". The user types a number and the screen shows the allowed range for their own numbers. A target is not accepted below 1500 kcal for men or 1200 kcal for women, or more than 500 kcal a day below maintenance. Outside the range the button stays off and a message says so. I tested this in a browser: too low and too high numbers are refused, the range follows the user's age, height, weight and sex, and the chosen target is kept after a refresh.
+
+**What I did not do:** I did not test the two changes with Jose again, because I ran out of time.
 
 ## Student declaration
 
