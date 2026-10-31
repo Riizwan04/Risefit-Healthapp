@@ -11,6 +11,7 @@ import { dailySummary } from "@/lib/summary";
 import WeekView from "@/components/WeekView";
 import WorkoutCard from "@/components/WorkoutCard";
 import TabBar from "@/components/TabBar";
+import BudgetCard from "@/components/BudgetCard";
 import Landing from "@/components/Landing";
 import { weekData, weekStats } from "@/lib/week";
 import { catchUpPlan } from "@/lib/catchup";
@@ -132,47 +133,6 @@ function Welcome({ onStart, onBack }) {
           Then tap a goal above. Defaults: male, 23, 172 cm, 72 kg.
         </p>
       </details>
-    </div>
-  );
-}
-
-// Daily budget card: kcal left, eaten of target, progress bar.
-function BudgetCard({ target, eaten }) {
-  const left = target - eaten;
-  const over = left < 0;
-  const pct = Math.min((eaten / target) * 100, 100);
-
-  // Emerald when on track, amber when over. Never red (red = safety alerts only).
-  const barColor = over ? "bg-amber-500" : "bg-emerald-500";
-  const numColor = over ? "text-amber-600" : "text-emerald-600";
-
-  return (
-    <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-      <p className="text-sm text-slate-500">Today</p>
-      <p className={`mt-1 text-5xl font-bold ${numColor}`}>
-        {Math.abs(left)}
-      </p>
-      <p className="text-sm text-slate-600">
-        {over ? "kcal over today's budget" : "kcal left today"}
-      </p>
-
-      <div
-        className="mt-4 h-3 w-full overflow-hidden rounded-full bg-slate-100"
-        role="progressbar"
-        aria-valuenow={Math.round(pct)}
-        aria-valuemin={0}
-        aria-valuemax={100}
-      >
-        <div className={`h-full ${barColor}`} style={{ width: `${pct}%` }} />
-      </div>
-      <p className="mt-2 text-sm text-slate-500">
-        {eaten} of {target} kcal eaten
-      </p>
-      {over && (
-        <p className="mt-2 text-sm text-amber-700">
-          No stress. One meal doesn't decide your week.
-        </p>
-      )}
     </div>
   );
 }
