@@ -9,6 +9,7 @@ import { missedMealNote } from "@/lib/mealtype";
 import DailySummary from "@/components/DailySummary";
 import { dailySummary } from "@/lib/summary";
 import WeekView from "@/components/WeekView";
+import WorkoutCard from "@/components/WorkoutCard";
 import { catchUpPlan } from "@/lib/catchup";
 import { dateStr, loadDays, saveDays, withDay } from "@/lib/days";
 
@@ -253,6 +254,7 @@ export default function Home() {
           <DailySummary
             summary={dailySummary({ target: computeTarget(profile).target, meals })}
           />
+          <WorkoutCard />
           <WeekView days={days} target={computeTarget(profile).target} />
         </div>
       ) : (
