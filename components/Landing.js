@@ -67,6 +67,10 @@ export default function Landing({ onStart, returning = false }) {
       </p>
 
       <div className="mt-5">{cta}</div>
+      <p className="mt-3 text-center text-xs text-slate-500">
+        No signup. Nothing to install. Your meal log is saved on your device, not
+        in an account.
+      </p>
 
       <div className="mt-6">
         <SampleMeal />
@@ -83,11 +87,6 @@ export default function Landing({ onStart, returning = false }) {
         ))}
       </ul>
 
-      <div className="mt-8">{cta}</div>
-      <p className="mt-3 text-center text-xs text-slate-500">
-        No signup. Nothing to install. Your meal log is saved on your device, not
-        in an account.
-      </p>
     </div>
   );
 }
