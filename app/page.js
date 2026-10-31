@@ -11,6 +11,7 @@ import { dailySummary } from "@/lib/summary";
 import WeekView from "@/components/WeekView";
 import WorkoutCard from "@/components/WorkoutCard";
 import TabBar from "@/components/TabBar";
+import Landing from "@/components/Landing";
 import { weekData, weekStats } from "@/lib/week";
 import { catchUpPlan } from "@/lib/catchup";
 import { dateStr, loadDays, saveDays, withDay } from "@/lib/days";
@@ -35,7 +36,7 @@ function Disclaimer() {
 }
 
 // First-visit screen: pick a goal, optionally tune your numbers.
-function Welcome({ onStart }) {
+function Welcome({ onStart, onBack }) {
   const [tuned, setTuned] = useState({ ...DEFAULT_PROFILE });
 
   // Update one field of the optional "Tune my numbers" form.
@@ -56,10 +57,12 @@ function Welcome({ onStart }) {
 
   return (
     <div>
-      <h1 className="mt-6 text-3xl font-bold text-emerald-600">RiseFit</h1>
+      <button onClick={onBack} className="text-sm text-slate-500 underline">
+        Back
+      </button>
+      <h1 className="mt-4 text-3xl font-bold text-emerald-600">What's your goal?</h1>
       <p className="mt-2 text-slate-600">
-        Say what you ate in your own words. We'll do the maths and keep you on
-        track, without guilt.
+        Pick one to begin. You can change it any time.
       </p>
 
       <div className="mt-6 space-y-3">
@@ -191,6 +194,7 @@ function EmptyTab({ text, onLog }) {
 
 export default function Home() {
   const [tab, setTab] = useState("today"); // today | summary | workout | week
+  const [step, setStep] = useState("landing"); // new visitors: landing -> goal
   const [profile, setProfile] = useState(null);
   const [days, setDays] = useState({}); // { "YYYY-MM-DD": [meals] } for recent days
   const [loaded, setLoaded] = useState(false); // avoids flashing the welcome screen
@@ -231,6 +235,7 @@ export default function Home() {
   const changeGoal = () => {
     setProfile(null);
     setTab("today");
+    setStep("goal"); // go straight to the goal picker, skip the landing
     try {
       localStorage.removeItem(STORAGE_KEY);
     } catch {}
@@ -285,7 +290,11 @@ export default function Home() {
             ))}
         </div>
       ) : (
-        <Welcome onStart={saveProfile} />
+        (step === "goal" ? (
+          <Welcome onStart={saveProfile} onBack={() => setStep("landing")} />
+        ) : (
+          <Landing onStart={() => setStep("goal")} />
+        ))
       )}
       <Disclaimer />
     </>
