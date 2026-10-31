@@ -2,8 +2,17 @@
 
 import { useEffect, useState } from "react";
 import { computeTarget, DEFAULT_PROFILE } from "@/lib/budget";
+import MealLog from "@/components/MealLog";
 
 const STORAGE_KEY = "risefit.profile"; // everything lives in this browser only
+const MEALS_KEY = "risefit.meals"; // { date: "YYYY-MM-DD", items: [...] }
+
+// Today's date in the user's local time, e.g. "2026-10-31".
+function todayStr() {
+  const d = new Date();
+  const pad = (n) => String(n).padStart(2, "0");
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+}
 
 // The three one-tap goals on the first screen.
 const GOALS = [
@@ -164,6 +173,7 @@ function BudgetCard({ target, eaten }) {
 
 export default function Home() {
   const [profile, setProfile] = useState(null);
+  const [meals, setMeals] = useState([]); // today's meals only
   const [loaded, setLoaded] = useState(false); // avoids flashing the welcome screen
 
   // Load the saved profile once, in the browser.
@@ -171,6 +181,9 @@ export default function Home() {
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
       if (saved) setProfile(JSON.parse(saved));
+      // Only keep meals saved today; a new day starts with an empty log.
+      const m = JSON.parse(localStorage.getItem(MEALS_KEY) || "null");
+      if (m && m.date === todayStr()) setMeals(m.items);
     } catch {
       // Storage blocked or corrupted: just show the welcome screen.
     }
@@ -183,6 +196,19 @@ export default function Home() {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(p));
     } catch {}
   };
+
+  // Update the meal list in state and in localStorage.
+  const saveMeals = (items) => {
+    setMeals(items);
+    try {
+      localStorage.setItem(
+        MEALS_KEY,
+        JSON.stringify({ date: todayStr(), items })
+      );
+    } catch {}
+  };
+
+  const eaten = meals.reduce((sum, m) => sum + m.kcal, 0);
 
   // "Change goal" clears the profile and returns to the first screen.
   const changeGoal = () => {
@@ -208,9 +234,13 @@ export default function Home() {
             </button>
           </div>
           <div className="mt-4">
-            {/* Nothing is logged yet (meal logging comes later), so eaten = 0 */}
-            <BudgetCard target={computeTarget(profile).target} eaten={0} />
+            <BudgetCard target={computeTarget(profile).target} eaten={eaten} />
           </div>
+          <MealLog
+            meals={meals}
+            onAdd={(meal) => saveMeals([...meals, meal])}
+            onRemove={(id) => saveMeals(meals.filter((m) => m.id !== id))}
+          />
         </div>
       ) : (
         <Welcome onStart={saveProfile} />
