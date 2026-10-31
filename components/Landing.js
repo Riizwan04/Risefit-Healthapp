@@ -1,47 +1,73 @@
-// First screen for a new visitor: a friendly welcome and one clear button.
-// No images (so no licensing issues): just a colour hero and three short points.
+import PhonePreview from "@/components/PhonePreview";
+import SampleMeal from "@/components/SampleMeal";
+
+// First screen: a friendly welcome, a preview of the app, a sample meal, one clear button.
+// Everything is our own drawing or CSS (no outside images, so no licensing issues).
 const POINTS = [
-  "Snap a photo or type your meal. We estimate the calories.",
-  "A calm daily budget, with no streaks and no guilt.",
-  "Gentle daily workouts and a simple 7-day view.",
+  { icon: "📸", text: "Snap a photo or type your meal. We estimate the calories." },
+  { icon: "🌿", text: "A calm daily budget, with no streaks and no guilt." },
+  { icon: "💪", text: "Gentle daily workouts and a simple 7-day view." },
 ];
 
 // returning = the visitor already has a saved goal: say "Welcome back" and show Continue.
 export default function Landing({ onStart, returning = false }) {
+  const cta = (
+    <button
+      onClick={onStart}
+      className="w-full rounded-xl bg-emerald-600 px-4 py-3 text-base font-semibold text-white shadow-sm active:bg-emerald-700"
+    >
+      {returning ? "Continue" : "Start your fitness journey"}
+    </button>
+  );
+
   return (
     <div className="pt-4">
-      <div className="rounded-3xl bg-gradient-to-br from-emerald-500 to-emerald-700 p-6 text-white shadow-sm">
-        <p className="text-sm font-medium text-emerald-100">
+      {/* Hero */}
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-emerald-500 to-emerald-700 p-6 pb-8 text-white shadow-sm">
+        {/* Decorative rings and a plate, drawn with SVG */}
+        <svg className="absolute -right-8 -top-8 opacity-25" width="200" height="200" viewBox="0 0 200 200" aria-hidden="true">
+          <circle cx="100" cy="100" r="90" fill="none" stroke="white" strokeWidth="10" />
+          <circle cx="100" cy="100" r="62" fill="none" stroke="white" strokeWidth="10" strokeDasharray="260 130" />
+          <circle cx="100" cy="100" r="34" fill="white" />
+        </svg>
+        <p className="relative text-sm font-medium text-emerald-100">
           {returning ? "Welcome back to" : "Welcome to"}
         </p>
-        <h1 className="mt-1 text-4xl font-bold">RiseFit</h1>
-        <p className="mt-3 text-lg font-medium">
-          Track your fitness. Start your journey today.
+        <h1 className="relative mt-1 text-5xl font-extrabold tracking-tight">RiseFit</h1>
+        <p className="relative mt-3 text-xl font-semibold leading-snug">
+          Track your fitness.
+          <br />
+          Start your journey today.
         </p>
       </div>
 
-      <p className="mt-5 text-slate-600">
+      <div className="mt-5">{cta}</div>
+
+      <p className="mt-5 text-center text-slate-600">
         Say what you ate in your own words. We'll do the maths and keep you on
         track, without guilt.
       </p>
 
-      <ul className="mt-5 space-y-3">
+      <div className="mt-6">
+        <PhonePreview />
+      </div>
+
+      <div className="mt-6">
+        <SampleMeal />
+      </div>
+
+      <ul className="mt-6 space-y-3">
         {POINTS.map((p) => (
-          <li key={p} className="flex items-start gap-3 text-sm text-slate-700">
-            <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-100 text-xs font-bold text-emerald-700">
-              ✓
+          <li key={p.text} className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white p-3 text-sm text-slate-700">
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-lg">
+              {p.icon}
             </span>
-            {p}
+            {p.text}
           </li>
         ))}
       </ul>
 
-      <button
-        onClick={onStart}
-        className="mt-8 w-full rounded-xl bg-emerald-600 px-4 py-3 text-base font-semibold text-white shadow-sm active:bg-emerald-700"
-      >
-        {returning ? "Continue" : "Start your fitness journey"}
-      </button>
+      <div className="mt-8">{cta}</div>
       <p className="mt-3 text-center text-xs text-slate-500">
         No signup. Nothing to install. Your meal log is saved on your device, not
         in an account.
