@@ -10,7 +10,9 @@ Rules:
 - Never give medical advice, diagnoses or diets.
 - If the text is not about food, return an empty items list.
 Reply with ONLY this JSON, nothing else:
-{"items":[{"name":string,"kcal":number,"protein_g":number}],"total_kcal":number|null,"note":string}
+{"items":[{"name":string,"qty":number,"kcal":number,"protein_g":number,"hidden_fat":string|null}],"total_kcal":number|null,"note":string}
+"name" is the food without a count (e.g. "roti"). "qty" is how many pieces/servings (e.g. 2). "kcal" and "protein_g" are the TOTAL for that qty.
+"hidden_fat" is a short note on cooking oil, ghee or butter you allowed for (e.g. "about 1 tsp ghee"), or null.
 "note" is one short friendly sentence about the main uncertainty (e.g. oil or portion size).`;
 
 // Keep numbers sane no matter what the model returns.
@@ -19,6 +21,8 @@ function clean(parsed) {
     .slice(0, 12)
     .map((i) => ({
       name: String(i.name || "Item").slice(0, 60),
+      qty: Math.min(Math.max(Number(i.qty) || 1, 0.5), 20),
+      hidden_fat: i.hidden_fat ? String(i.hidden_fat).slice(0, 60) : null,
       kcal: Math.min(Math.max(Math.round(Number(i.kcal) || 0), 0), 3000),
       protein_g: Math.min(Math.max(Math.round(Number(i.protein_g) || 0), 0), 300),
     }));
