@@ -10,6 +10,8 @@ import DailySummary from "@/components/DailySummary";
 import { dailySummary } from "@/lib/summary";
 import WeekView from "@/components/WeekView";
 import WorkoutCard from "@/components/WorkoutCard";
+import TabBar from "@/components/TabBar";
+import { weekData, weekStats } from "@/lib/week";
 import { catchUpPlan } from "@/lib/catchup";
 import { dateStr, loadDays, saveDays, withDay } from "@/lib/days";
 
@@ -172,7 +174,23 @@ function BudgetCard({ target, eaten }) {
   );
 }
 
+// Shown on a tab that has nothing to display yet, with a shortcut to log a meal.
+function EmptyTab({ text, onLog }) {
+  return (
+    <div className="mt-6 rounded-xl border border-slate-200 bg-white p-4 text-center">
+      <p className="text-sm text-slate-600">{text}</p>
+      <button
+        onClick={onLog}
+        className="mt-3 rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white"
+      >
+        Log a meal
+      </button>
+    </div>
+  );
+}
+
 export default function Home() {
+  const [tab, setTab] = useState("today"); // today | summary | workout | week
   const [profile, setProfile] = useState(null);
   const [days, setDays] = useState({}); // { "YYYY-MM-DD": [meals] } for recent days
   const [loaded, setLoaded] = useState(false); // avoids flashing the welcome screen
@@ -212,10 +230,16 @@ export default function Home() {
   // "Change goal" clears the profile and returns to the first screen.
   const changeGoal = () => {
     setProfile(null);
+    setTab("today");
     try {
       localStorage.removeItem(STORAGE_KEY);
     } catch {}
   };
+
+  // Numbers shared by several tabs.
+  const target = profile ? computeTarget(profile).target : 0;
+  const summary = profile ? dailySummary({ target, meals }) : null;
+  const hasWeekData = profile ? weekStats(weekData(days, target), target).loggedDays > 0 : false;
 
   if (!loaded) return null;
 
@@ -223,39 +247,42 @@ export default function Home() {
     <>
       {profile ? (
         <div>
-          <div className="flex items-center justify-between">
-            <h1 className="text-xl font-bold text-emerald-600">RiseFit</h1>
-            <button
-              onClick={changeGoal}
-              className="text-sm text-slate-500 underline"
-            >
-              Change goal
-            </button>
-          </div>
-          <div className="mt-4">
-            <BudgetCard target={computeTarget(profile).target} eaten={eaten} />
-          </div>
-          <CatchUpCard
-            plan={catchUpPlan({
-              target: computeTarget(profile).target,
-              meals,
-              weightKg: profile.weightKg,
-            })}
-          />
-          <MissedMealNote note={missedMealNote(meals, new Date().getHours())} />
-          <MealLog
-            meals={meals}
-            onAdd={(meal) => saveMeals([...meals, meal])}
-            onRemove={(id) => saveMeals(meals.filter((m) => m.id !== id))}
-            onUpdate={(id, updated) =>
-              saveMeals(meals.map((m) => (m.id === id ? updated : m)))
-            }
-          />
-          <DailySummary
-            summary={dailySummary({ target: computeTarget(profile).target, meals })}
-          />
-          <WorkoutCard />
-          <WeekView days={days} target={computeTarget(profile).target} />
+          <TabBar tab={tab} onTab={setTab} onChangeGoal={changeGoal} />
+
+          {/* Today: the daily flow (budget, guidance, log a meal) */}
+          {tab === "today" && (
+            <>
+              <div className="mt-2">
+                <BudgetCard target={target} eaten={eaten} />
+              </div>
+              <CatchUpCard plan={catchUpPlan({ target, meals, weightKg: profile.weightKg })} />
+              <MissedMealNote note={missedMealNote(meals, new Date().getHours())} />
+              <MealLog
+                meals={meals}
+                onAdd={(meal) => saveMeals([...meals, meal])}
+                onRemove={(id) => saveMeals(meals.filter((m) => m.id !== id))}
+                onUpdate={(id, updated) =>
+                  saveMeals(meals.map((m) => (m.id === id ? updated : m)))
+                }
+              />
+            </>
+          )}
+
+          {tab === "summary" &&
+            (summary ? (
+              <DailySummary summary={summary} />
+            ) : (
+              <EmptyTab text="Log a meal to see your summary for today." onLog={() => setTab("today")} />
+            ))}
+
+          {tab === "workout" && <WorkoutCard />}
+
+          {tab === "week" &&
+            (hasWeekData ? (
+              <WeekView days={days} target={target} />
+            ) : (
+              <EmptyTab text="Log a meal to start your 7-day view." onLog={() => setTab("today")} />
+            ))}
         </div>
       ) : (
         <Welcome onStart={saveProfile} />
