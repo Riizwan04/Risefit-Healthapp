@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { computeTarget, DEFAULT_PROFILE } from "@/lib/budget";
 import MealLog from "@/components/MealLog";
 import CatchUpCard from "@/components/CatchUpCard";
+import DailySummary from "@/components/DailySummary";
+import { dailySummary } from "@/lib/summary";
 import { catchUpPlan } from "@/lib/catchup";
 
 const STORAGE_KEY = "risefit.profile"; // everything lives in this browser only
@@ -249,6 +251,9 @@ export default function Home() {
             meals={meals}
             onAdd={(meal) => saveMeals([...meals, meal])}
             onRemove={(id) => saveMeals(meals.filter((m) => m.id !== id))}
+          />
+          <DailySummary
+            summary={dailySummary({ target: computeTarget(profile).target, meals })}
           />
         </div>
       ) : (
