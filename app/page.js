@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { computeTarget, DEFAULT_PROFILE } from "@/lib/budget";
 import MealLog from "@/components/MealLog";
 import CatchUpCard from "@/components/CatchUpCard";
@@ -16,6 +16,7 @@ import TabBar from "@/components/TabBar";
 import BudgetCard from "@/components/BudgetCard";
 import Tiles from "@/components/Tiles";
 import Landing from "@/components/Landing";
+import Toast from "@/components/Toast";
 import { weekData, weekStats } from "@/lib/week";
 import { catchUpPlan } from "@/lib/catchup";
 import { dateStr, loadDays, saveDays, withDay } from "@/lib/days";
@@ -161,6 +162,13 @@ export default function Home() {
   const [step, setStep] = useState("landing");
   const [welcomeBack, setWelcomeBack] = useState(false); // true after a few days away
   const [, setTick] = useState(0); // bump to re-render after water changes
+  const [toast, setToast] = useState(""); // short message that fades after a moment
+  const toastTimer = useRef(null);
+  const showToast = (message) => {
+    setToast(message);
+    clearTimeout(toastTimer.current);
+    toastTimer.current = setTimeout(() => setToast(""), 2500);
+  };
   const [profile, setProfile] = useState(null);
   const [days, setDays] = useState({}); // { "YYYY-MM-DD": [meals] } for recent days
   const [loaded, setLoaded] = useState(false); // avoids flashing the welcome screen
@@ -259,7 +267,10 @@ export default function Home() {
               <CatchUpCard plan={catchUpPlan({ target, meals, weightKg: profile.weightKg })} />
               <MealLog
                 meals={meals}
-                onAdd={(meal) => saveMeals([...meals, meal])}
+                onAdd={(meal) => {
+                  saveMeals([...meals, meal]);
+                  showToast("Saved to today's budget");
+                }}
                 onRemove={(id) => saveMeals(meals.filter((m) => m.id !== id))}
                 onUpdate={(id, updated) =>
                   saveMeals(meals.map((m) => (m.id === id ? updated : m)))
@@ -287,6 +298,7 @@ export default function Home() {
       ) : (
         <Welcome onStart={saveProfile} onBack={() => setStep("landing")} />
       )}
+      <Toast message={toast} />
       <Disclaimer />
     </>
   );

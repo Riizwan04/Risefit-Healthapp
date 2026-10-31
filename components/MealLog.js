@@ -18,6 +18,16 @@ import {
 
 // Describe a meal -> AI estimate -> preview (editable) -> add to today's list.
 // The parent owns the meal data; this component only reports changes.
+// A small icon for each meal type (plain emoji, no image files).
+const TYPE_ICON = { breakfast: "🌅", lunch: "🍛", snack: "🍎", dinner: "🌙" };
+
+// Tap-to-try examples for an empty day.
+const EXAMPLES = [
+  "2 rotis, dal and dahi",
+  "Chicken curry with half a cup of rice",
+  "Masala dosa with sambar",
+];
+
 export default function MealLog({ meals, onAdd, onRemove, onUpdate }) {
   const [text, setText] = useState("");
   const [loading, setLoading] = useState(false);
@@ -288,11 +298,34 @@ export default function MealLog({ meals, onAdd, onRemove, onUpdate }) {
       )}
 
       {meals.length === 0 ? (
-        <p className="mt-4 text-sm text-slate-500">Nothing logged yet today.</p>
+        <div className="mt-4 rounded-xl border border-dashed border-emerald-200 bg-white p-4 text-center">
+          <p className="text-2xl">🍽️</p>
+          <p className="mt-1 text-sm font-medium text-slate-700">Your plate is empty</p>
+          <p className="text-xs text-slate-500">Type a meal, snap a photo, or tap an example:</p>
+          <div className="mt-3 flex flex-wrap justify-center gap-2">
+            {EXAMPLES.map((ex) => (
+              <button
+                key={ex}
+                type="button"
+                onClick={() => {
+                  setText(ex);
+                  document.querySelector("#log-meal input")?.focus();
+                }}
+                className="rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs text-emerald-800"
+              >
+                {ex}
+              </button>
+            ))}
+          </div>
+        </div>
       ) : (
         <ul className="mt-4 divide-y divide-slate-200 rounded-xl border border-slate-200 bg-white">
           {meals.map((m) => (
-            <li key={m.id} className="px-3 py-2">
+            <li key={m.id} className="flex gap-3 px-3 py-2">
+              <span className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-emerald-50 text-base">
+                {TYPE_ICON[m.type] || "🍽️"}
+              </span>
+              <div className="min-w-0 flex-1">
               <div className="flex items-center justify-between">
                 <span className="min-w-0 flex-1 truncate text-sm">{m.text}</span>
                 <span className="ml-3 text-sm text-slate-600">{m.kcal} kcal</span>
@@ -327,6 +360,7 @@ export default function MealLog({ meals, onAdd, onRemove, onUpdate }) {
                   />
                 </div>
               )}
+              </div>
             </li>
           ))}
         </ul>
