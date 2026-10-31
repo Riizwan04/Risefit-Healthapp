@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { computeTarget, DEFAULT_PROFILE } from "@/lib/budget";
 import MealLog from "@/components/MealLog";
 import CatchUpCard from "@/components/CatchUpCard";
+import MissedMealNote from "@/components/MissedMealNote";
+import { missedMealNote } from "@/lib/mealtype";
 import DailySummary from "@/components/DailySummary";
 import { dailySummary } from "@/lib/summary";
 import { catchUpPlan } from "@/lib/catchup";
@@ -247,6 +249,7 @@ export default function Home() {
               weightKg: profile.weightKg,
             })}
           />
+          <MissedMealNote note={missedMealNote(meals, new Date().getHours())} />
           <MealLog
             meals={meals}
             onAdd={(meal) => saveMeals([...meals, meal])}

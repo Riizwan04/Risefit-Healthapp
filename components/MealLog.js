@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import ItemChips from "@/components/ItemChips";
 import CameraCapture from "@/components/CameraCapture";
 import { resizeImage } from "@/lib/image";
+import { MEAL_TYPES, TYPE_LABEL, guessMealType } from "@/lib/mealtype";
 import {
   toMealItem,
   setItemQty,
@@ -84,6 +85,7 @@ export default function MealLog({ meals, onAdd, onRemove, onUpdate }) {
       } else {
         setPreview({
           items: (data.items || []).map(toMealItem),
+          type: guessMealType(new Date().getHours()), // user can change it
           kcal: "", // only used when nothing was recognised: user types it
           note: data.note || "",
           source: data.source,
@@ -108,12 +110,13 @@ export default function MealLog({ meals, onAdd, onRemove, onUpdate }) {
         ? {
             id: Date.now(),
             text: text.trim() || names,
+            type: preview.type,
             source: preview.source, // "ai" or "demo" (fallback)
             items: preview.items,
             kcal: total,
             protein_g: sumProtein(preview.items),
           }
-        : { id: Date.now(), text: text.trim() || "Meal", source: "manual", kcal: total }
+        : { id: Date.now(), text: text.trim() || "Meal", type: preview.type, source: "manual", kcal: total }
     );
     setText("");
     removePhoto();
@@ -211,6 +214,20 @@ export default function MealLog({ meals, onAdd, onRemove, onUpdate }) {
       {/* Estimate preview: user can correct the kcal before it is saved */}
       {preview && (
         <div className="mt-3 rounded-xl border border-emerald-200 bg-white p-3">
+          <label className="mb-2 flex items-center gap-2 text-sm text-slate-600">
+            Meal
+            <select
+              className={field}
+              value={preview.type}
+              onChange={(e) => setPreview({ ...preview, type: e.target.value })}
+            >
+              {MEAL_TYPES.map((t) => (
+                <option key={t} value={t}>
+                  {TYPE_LABEL[t]}
+                </option>
+              ))}
+            </select>
+          </label>
           {hasItems && (
             <ItemChips
               items={preview.items}
@@ -279,10 +296,11 @@ export default function MealLog({ meals, onAdd, onRemove, onUpdate }) {
                   ✕
                 </button>
               </div>
-              {SOURCE_LABEL[m.source] && (
+              {(TYPE_LABEL[m.type] || SOURCE_LABEL[m.source]) && (
                 <p className="mt-0.5 text-xs text-slate-400">
-                  {SOURCE_LABEL[m.source]}
-                  {isEdited(m) && " · edited"}
+                  {[TYPE_LABEL[m.type], SOURCE_LABEL[m.source], isEdited(m) && "edited"]
+                    .filter(Boolean)
+                    .join(" · ")}
                 </p>
               )}
               {m.items && (
