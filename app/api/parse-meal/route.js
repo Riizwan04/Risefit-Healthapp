@@ -1,7 +1,8 @@
 import { checkRedFlags } from "@/lib/safety";
 import { demoParse } from "@/lib/demo";
+import { callGemini } from "@/lib/gemini";
 
-// Server-side only: the Gemini API key is read from env vars and never reaches the browser.
+// Server-side only: the key stays in env vars (see lib/gemini.js) and never reaches the browser.
 
 const SYSTEM_PROMPT = `You estimate calories for meals described in plain words, often Indian food, Hinglish, or home/mess/PG meals with no exact weights.
 Rules:
@@ -73,33 +74,15 @@ function imageProblem(image) {
 
 // Ask Gemini (text, plus the photo if there is one) and return clean JSON.
 async function askGemini(text, image) {
-  const model = process.env.GEMINI_MODEL || "gemini-2.5-flash"; // supports images
   const parts = [{ text: text || "Estimate the meal in this photo." }];
   if (image) parts.push({ inlineData: { mimeType: image.mimeType, data: image.data } });
 
-  const res = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent`,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-goog-api-key": process.env.GEMINI_API_KEY, // header, so it never appears in a URL/log
-      },
-      body: JSON.stringify({
-        systemInstruction: { parts: [{ text: SYSTEM_PROMPT }] },
-        contents: [{ role: "user", parts }],
-        generationConfig: {
-          responseMimeType: "application/json", // ask for JSON back
-          maxOutputTokens: 2048,
-          temperature: 0.2,
-        },
-      }),
-      signal: AbortSignal.timeout(image ? 25000 : 15000), // don't hang the user
-    }
-  );
-  if (!res.ok) throw new Error(`Gemini HTTP ${res.status}`);
-  const data = await res.json();
-  const reply = (data.candidates?.[0]?.content?.parts || []).map((p) => p.text || "").join("");
+  const reply = await callGemini({
+    system: SYSTEM_PROMPT,
+    parts,
+    json: true,
+    timeoutMs: image ? 25000 : 15000,
+  });
   const json = reply.match(/\{[\s\S]*\}/);
   if (!json) throw new Error("No JSON in reply");
   return clean(JSON.parse(json[0]));
