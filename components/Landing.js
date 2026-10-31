@@ -18,14 +18,15 @@ const Tag = ({ className, name, kcal }) => (
   </span>
 );
 
-// returning = the visitor already has a saved goal: say "Welcome back" and show Continue.
+// returning = the visitor already has a saved goal: say "Welcome back". The button reads the
+// same for everyone, but for a returning visitor it opens their saved app.
 export default function Landing({ onStart, returning = false }) {
   const cta = (
     <button
       onClick={onStart}
       className="w-full rounded-2xl bg-gradient-to-br from-emerald-400 to-emerald-600 px-4 py-4 text-base font-bold text-white shadow-[0_0_34px_rgba(16,185,129,0.5)] active:brightness-90"
     >
-      {returning ? "Continue" : "Start your fitness journey"}
+      Start your fitness journey
     </button>
   );
 
