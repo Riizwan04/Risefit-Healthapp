@@ -1,29 +1,37 @@
-import Ring from "@/components/Ring";
+import SegArc from "@/components/SegArc";
 
-// Daily budget card: a ring with the kcal left in the middle.
+// Daily budget: a segmented arc with the kcal left in the middle.
 // Emerald when on track, amber when over. Never red (red = safety alerts only).
 export default function BudgetCard({ target, eaten }) {
   const left = target - eaten;
   const over = left < 0;
 
   return (
-    <div className="rounded-2xl border border-white/10 bg-white/5 p-5 shadow-sm">
-      <p className="text-sm text-slate-400">Today</p>
-      <div className="mt-2">
-        <Ring value={eaten} max={target} strokeClass={over ? "stroke-amber-400" : "stroke-emerald-500"}>
-          <p className={`text-5xl font-bold ${over ? "text-amber-300" : "text-emerald-400"}`}>
+    <div className="glass relative overflow-hidden p-4 pb-3">
+      <div
+        className={`pointer-events-none absolute -top-10 left-1/2 h-48 w-72 -translate-x-1/2 rounded-full blur-3xl ${
+          over ? "bg-amber-500/25" : "bg-emerald-500/30"
+        }`}
+      />
+      <p className="relative text-xs font-medium uppercase tracking-wide text-slate-400">Today</p>
+      <div className="relative mt-1">
+        <SegArc value={eaten} max={target} over={over}>
+          <p className={`text-xs font-medium ${over ? "text-amber-300" : "text-emerald-300"}`}>
+            {over ? "a little over" : "on track"}
+          </p>
+          <p className={`text-5xl font-extrabold tracking-tight ${over ? "text-amber-300" : "text-emerald-300"}`}>
             {Math.abs(left)}
           </p>
-          <p className="px-6 text-xs text-slate-300">
+          <p className="text-xs text-slate-300">
             {over ? "kcal over today's budget" : "kcal left today"}
           </p>
-        </Ring>
+        </SegArc>
       </div>
-      <p className="mt-3 text-center text-sm text-slate-400">
+      <p className="relative mt-1 text-center text-sm text-slate-400">
         {eaten} of {target} kcal eaten
       </p>
       {over && (
-        <p className="mt-2 text-center text-sm text-amber-300">
+        <p className="relative mt-2 text-center text-sm text-amber-300">
           No stress. One meal doesn't decide your week.
         </p>
       )}
